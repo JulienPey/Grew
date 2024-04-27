@@ -24,7 +24,7 @@ public class ChunkHandler extends AppCompatActivity {
     public final int AmountChunkY;
     private final int Screenwidth;
     private final int Screenheight;
-    public static final int ChunkSize = 4;
+    public static final int ChunkSize = 10;
     public final Bitmap Chunksbitmap;
     private final Matrix matrix;
     public Chunk[] ChunkList;
@@ -52,7 +52,7 @@ public class ChunkHandler extends AppCompatActivity {
         // chunk
         ChunkList = new Chunk[this.AmountChunkX * this.AmountChunkY];
         for (int i = 0; i < this.AmountChunkX * this.AmountChunkY; i++) {
-            ChunkList[i] = new Chunk(i % this.AmountChunkX, i / this.AmountChunkX);
+            ChunkList[i] = new Chunk(i % this.AmountChunkX, i / this.AmountChunkX,this);
             ChunkList[i].initBitmap();
             ChunkList[i].drawOnBitmap(Chunksbitmap);
         }
@@ -64,12 +64,13 @@ public class ChunkHandler extends AppCompatActivity {
     public void draw(Canvas canvas) {
 
         canvas.drawBitmap(Chunksbitmap, 0,0, null);
-/*
         for(int i = 0; i < this.AmountChunkX * this.AmountChunkY;i++){
-               ChunkList[i].drawOnScreen(i,AmountChunkX,AmountChunkY,canvas);
+            if( ChunkList[i].hasUpdated){
+
+                ChunkList[i].drawOnBitmap(Chunksbitmap);
+            }
         }
 
- */
 
     }
 }

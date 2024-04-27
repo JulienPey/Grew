@@ -49,7 +49,7 @@ public class Game  {
 
 
     public void draw(Canvas canvas) {
-        t += 1;
+
         worldhandler.draw(canvas);
         this.Console(canvas);
     }
@@ -71,7 +71,12 @@ public class Game  {
 
 
     public void TouchEvent(MotionEvent motionEvent) {
+        t += 1;
         int action = motionEvent.getAction();
+
+        if(motionEvent.getY()> height){
+            return;
+        }
 
         int x = (int) motionEvent.getX() / pixelSize;
         int y = (int) motionEvent.getY() / pixelSize;
@@ -81,20 +86,12 @@ public class Game  {
 
         int chunkID = chunkX + (chunkY * worldhandler.chunkhandler.AmountChunkX);
 
-       // worldhandler.chunkhandler.ChunkList[chunkID].bitmap.eraseColor(Color.RED);
-        for(int i =0; i < ChunkHandler.ChunkSize*ChunkHandler.ChunkSize; i++){
-            worldhandler.chunkhandler.ChunkList[chunkID].PixelColor[i] = Color.RED;
-        }
+        //worldhandler.chunkhandler.ChunkList[chunkID].bitmap.eraseColor(Color.RED);
 
-        Canvas canvas = new Canvas(worldhandler.chunkhandler.ChunkList[chunkID].bitmap);
-        Paint paint = new Paint();
+        worldhandler.chunkhandler.ChunkList[chunkID].setPixel(x % ChunkHandler.ChunkSize, y % ChunkHandler.ChunkSize, Color.rgb(t * 10, t, t), 0);
 
-        for(int i =0 ; i < ChunkHandler.ChunkSize*ChunkHandler.ChunkSize; i++){
-            paint.setColor(worldhandler.chunkhandler.ChunkList[chunkID].PixelColor[i]);
-            canvas.drawPoint(i%ChunkHandler.ChunkSize ,(int) (i/ChunkHandler.ChunkSize),paint);
-        }
 
-        worldhandler.chunkhandler.ChunkList[chunkID].drawOnBitmap(worldhandler.chunkhandler.Chunksbitmap);
+
 
     }
 }
