@@ -88,7 +88,6 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
         this.holder = holder;
 
         if (drawThread != null){
-            Log.d(LOGTAG, "draw thread still active..");
             drawingActive = false;
             try{
                 drawThread.join();
@@ -97,7 +96,6 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
         surfaceReady = true;
         startDrawThread();
-        Log.d(LOGTAG, "Created");
     }
 
     @Override
@@ -109,12 +107,11 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
         this.holder = null;
         surfaceReady = false;
-        Log.d(LOGTAG, "Destroyed");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        // Handle touch events
+        Game.TouchEvent(event);
         return true;
     }
 
@@ -123,17 +120,14 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
      */
     public void stopDrawThread(){
         if (drawThread == null){
-            Log.d(LOGTAG, "DrawThread is null");
             return;
         }
         drawingActive = false;
         while (true){
             try{
-                Log.d(LOGTAG, "Request last frame");
                 drawThread.join(5000);
                 break;
             } catch (Exception e) {
-                Log.e(LOGTAG, "Could not join with draw thread");
             }
         }
         drawThread = null;
@@ -189,7 +183,6 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
 
 
-
             // Calculate UPS et FPS
             elapsedTime = System.currentTimeMillis() - startTime;
             if (elapsedTime >= 1000) {
@@ -207,78 +200,5 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
         }
 
-
-        /*
-    @Override
-    public void run() {
-        Log.d(LOGTAG, "Draw thread started");
-        long frameStartTime;
-        long frameTime;
-
-        if (android.os.Build.BRAND.equalsIgnoreCase("google") && android.os.Build.MANUFACTURER.equalsIgnoreCase("asus") && android.os.Build.MODEL.equalsIgnoreCase("Nexus 7")) {
-            Log.w(LOGTAG, "Sleep 500ms (Device: Asus Nexus 7)");
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) {}
-        }
-
-
-        int updateCount = 0;
-        int frameCount = 0;
-        long startTime;
-        long elapsedTime;
-        long sleepTime;
-        startTime = System.currentTimeMillis();
-
-        while (drawingActive) {
-            if (sf == null) {
-                return;
-            }
-
-            frameStartTime = System.nanoTime();
-            Canvas canvas = sf.lockCanvas();
-            if (canvas != null) {
-                try {
-                    synchronized (sf) {
-                        tick();
-                        updateCount++;
-                        render(canvas);
-                    }
-                } finally {
-                    sf.unlockCanvasAndPost(canvas);
-                    frameCount++;
-                }
-            }
-
-            // calculate the time required to draw the frame in ms
-            frameTime = (System.nanoTime() - frameStartTime) / 1000000;
-
-            if (frameTime < MAX_FRAME_TIME){
-                try {
-                    Thread.sleep(MAX_FRAME_TIME - frameTime);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-
-
-            // Calculate UPS et FPS
-            elapsedTime = System.currentTimeMillis() - startTime;
-            if(elapsedTime >= 1000){
-                averageUPS = updateCount / (1E-3 * elapsedTime);
-                averageFPS = frameCount / (1E-3 * elapsedTime);
-
-                updateCount = 0;
-                frameCount = 0;
-                startTime = System.currentTimeMillis();
-            }
-
-
-
-
-        }
-        Log.d(LOGTAG, "Draw thread finished");
-    }
-         */
 }
 
