@@ -19,4 +19,8 @@ public class WorldHandler {
 
         chunkhandler.draw(canvas);
     }
+
+    public void update() {
+        chunkhandler.update();
+    }
 }

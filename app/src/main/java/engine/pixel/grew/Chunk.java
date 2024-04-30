@@ -13,21 +13,27 @@ public class Chunk {
     private final ChunkHandler chunkHandler;
     private Matrix matrix;
     public boolean hasUpdated = true;
-    public long[] PixelList;
+    public boolean willbeActive = true;
+    public int[] PixelList;
     public int[] PixelColor;
     /*
     0000 // R
     0000 // G
     0000 // B
 
-    0000 // Type Elément
+    0000 // [IsSolide][][][]
+    0000 // Type
+    0000 // Type
+    0000 // [][][][]
+
     0000 // Vélocité X
     0000 // Vélocité Y
-    0000 // Bits de boolen spécifique
+    0000 // [][][][]
+    0000 // [][][][IsActive]
      */
 
     public Chunk(int x, int y, ChunkHandler chunkHandler) {
-        PixelList = new long[ChunkHandler.ChunkSize*ChunkHandler.ChunkSize];
+        PixelList = new int[ChunkHandler.ChunkSize*ChunkHandler.ChunkSize];
 
         PixelColor = new int[ChunkHandler.ChunkSize*ChunkHandler.ChunkSize];
         for(int i =0; i < ChunkHandler.ChunkSize*ChunkHandler.ChunkSize;i++){
@@ -68,11 +74,11 @@ public class Chunk {
         }
     }
 
-    public void setPixel(int x, int y, int color, long data) {
+    public void setPixel(int x, int y, int color, int data) {
        PixelList[x+y*ChunkHandler.ChunkSize] =  data;
        PixelColor[x+y*ChunkHandler.ChunkSize] = color;
 
         bitmap.setPixel(x , y,color);
-        hasUpdated = true;
+        willbeActive = true;
     }
 }

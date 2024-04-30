@@ -25,7 +25,10 @@ public class Game  {
     private  int t;
     public static Matrix matrix = new Matrix();
     public GameLoop gameLoop;
-    public static final int pixelSize = 7;
+    public static final int pixelSize =7 ;
+    private int x;
+    private int y;
+    private boolean isdown;
 
 
     public Game(Context context,GameLoop gameLoop){
@@ -61,35 +64,65 @@ public class Game  {
         paint.setTextSize(20);
 
         canvas.drawText("UPS: " + gameLoop.getAverageUPS(), 10, 30, paint);
-        canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 70, paint);
+
+        Paint paint2 = new Paint();
+        paint2.setColor(Color.RED); // Couleur du contour
+        paint2.setStrokeWidth(1); // Épaisseur de la ligne du contour
+        paint2.setStyle(Paint.Style.STROKE);
+
+
+        for(int i = 0; i < worldhandler.chunkhandler.AmountChunkX * worldhandler.chunkhandler.AmountChunkY;i++) {
+            if (worldhandler.chunkhandler.ChunkList[i].willbeActive) {
+                int left = ((i % worldhandler.chunkhandler.AmountChunkX) * ChunkHandler.ChunkSize) * pixelSize;
+                int top = ((i / worldhandler.chunkhandler.AmountChunkX) * ChunkHandler.ChunkSize) * pixelSize;
+                canvas.drawRect(left, top, left + ChunkHandler.ChunkSize * pixelSize, top +  ChunkHandler.ChunkSize * pixelSize, paint2);
+            }
+        }
 
     }
 
     public void update() {
-
+        worldhandler.update();
+        Touch();
     }
+    public void Touch() {
 
+        if(!isdown){
+            return;
+        }
+
+        for(int i =0;i < 5;i++){
+            for(int j =0;j < 5;j++) {
+
+                int chunkX = (x+i) / ChunkHandler.ChunkSize;
+                int chunkY =  (y+j) / ChunkHandler.ChunkSize;
+
+                int chunkID = chunkX + (chunkY * worldhandler.chunkhandler.AmountChunkX);
+
+                worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(t * 10, 255, 255), ChunkHandler.setType(1 | (1 << 31),1));
+
+            }
+        }
+    }
 
     public void TouchEvent(MotionEvent motionEvent) {
         t += 1;
         int action = motionEvent.getAction();
 
+        if(action == MotionEvent.ACTION_DOWN){
+            this.isdown = true;
+        }
+
+        if(action == MotionEvent.ACTION_UP){
+            this.isdown = false;
+        }
+
         if(motionEvent.getY()> height){
             return;
         }
 
-        int x = (int) motionEvent.getX() / pixelSize;
-        int y = (int) motionEvent.getY() / pixelSize;
-
-        int chunkX = x / ChunkHandler.ChunkSize;
-        int chunkY = y / ChunkHandler.ChunkSize;
-
-        int chunkID = chunkX + (chunkY * worldhandler.chunkhandler.AmountChunkX);
-
-        //worldhandler.chunkhandler.ChunkList[chunkID].bitmap.eraseColor(Color.RED);
-
-        worldhandler.chunkhandler.ChunkList[chunkID].setPixel(x % ChunkHandler.ChunkSize, y % ChunkHandler.ChunkSize, Color.rgb(t * 10, t, t), 0);
-
+        this.x = (int) motionEvent.getX() / pixelSize;
+        this.y = (int) motionEvent.getY() / pixelSize;
 
 
 
