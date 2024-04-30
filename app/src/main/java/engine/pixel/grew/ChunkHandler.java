@@ -57,7 +57,7 @@ public class ChunkHandler extends AppCompatActivity {
         for (int i = 0; i < this.AmountChunkX * this.AmountChunkY; i++) {
             ChunkList[i] = new Chunk(i % this.AmountChunkX, i / this.AmountChunkX,this);
             ChunkList[i].initBitmap();
-            ChunkList[i].drawOnBitmap(Chunksbitmap);
+           // ChunkList[i].drawOnBitmap(Chunksbitmap);
         }
 
         this.threadpool = new ThreadPool();
@@ -66,11 +66,11 @@ public class ChunkHandler extends AppCompatActivity {
 
     public void draw(Canvas canvas) {
 
-        canvas.drawBitmap(Chunksbitmap, 0,0, null);
+        //canvas.drawBitmap(Chunksbitmap, 0,0, null);
         for(int i = 0; i < this.AmountChunkX * this.AmountChunkY;i++){
-            if( ChunkList[i].hasUpdated){
-                ChunkList[i].drawOnBitmap(Chunksbitmap);
-            }
+           // if( ChunkList[i].hasUpdated){
+                ChunkList[i].drawOnBitmap(Chunksbitmap,canvas);
+           // }
         }
 
 
@@ -101,30 +101,75 @@ public class ChunkHandler extends AppCompatActivity {
                             continue;
                         }
 
+                        if(getType(chunk.PixelList[j]) == 2) { // Type eau
+                            update_eau(chunkX,chunkY);
+                            continue;
+                        }
+
 
 
                 }
+
+                chunk.hasUpdated = false;
             }
         }
 
 
     }
 
+    private void update_eau(int worldX, int worldY) {
+
+
+        int spreadTime = 5;
+
+        for(int i = 0;i < spreadTime; i++) {
+
+            if(worldY <= 0 || worldY >= Screenheight/Game.pixelSize -1){return;}
+            if(worldX <= 0 || worldX >= Screenwidth/Game.pixelSize -1){return;}
+
+            if ((getPixelData(worldX, worldY + 1) >> 31) == 0) {
+                swappixel(worldX, worldY, worldX, worldY + 1);
+                worldY += 1;
+            } else if ((getPixelData(worldX + 1, worldY) >> 31) == 0 && worldY%2 == 0) {
+                swappixel(worldX, worldY, worldX + 1, worldY);
+                worldX += 1;
+            } else if ((getPixelData(worldX - 1, worldY) >> 31) == 0 && worldY%2 == 1) {
+                swappixel(worldX, worldY, worldX - 1, worldY);
+                worldX -= 1;
+            }
+        }
+    }
+
+
     private void update_sable(int worldX, int worldY) {
 
-        if((getPixelData(worldX,worldY+1) >> 63) == 0){
-            swappixel(worldX,worldY,worldX,worldY+1);
-        } else if((getPixelData(worldX+1,worldY+1) >> 63) == 0){
-            swappixel(worldX,worldY,worldX+1,worldY+1);
-        }else  if((getPixelData(worldX-1,worldY+1) >> 63) == 0){
-            swappixel(worldX,worldY,worldX-1,worldY+1);
+
+        int spreadTime = 1;
+
+        for(int i = 0;i < spreadTime; i++) {
+
+            if(worldY <= 0 || worldY >= Screenheight/Game.pixelSize -1){return;}
+            if(worldX <= 0 || worldX >= Screenwidth/Game.pixelSize -1){return;}
+
+            if ((getPixelData(worldX, worldY + 1) >> 31) == 0) {
+                swappixel(worldX, worldY, worldX, worldY + 1);
+                worldY += 1;
+            }  else if ((getPixelData(worldX - 1, worldY + 1) >> 31) == 0) {
+                swappixel(worldX, worldY, worldX - 1, worldY + 1);
+                worldY += 1;
+                worldX -= 1;
+            }else if ((getPixelData(worldX + 1, worldY + 1) >> 31) == 0) {
+                swappixel(worldX, worldY, worldX + 1, worldY + 1);
+                worldY += 1;
+                worldX += 1;
+            }
         }
     }
 
     public int getPixelData(int x,int y) {
 
-        if(y <= 0 || y >= AmountChunkY*ChunkSize-1){return (1 | (1 << 31));}
-        if(x <= 0 || x >= AmountChunkX*ChunkSize-1){return (1 | (1 << 31));}
+        if(y <= 0 || y >= Screenheight/Game.pixelSize -1){return (1 | (1 << 31));}
+        if(x <= 0 || x >= Screenwidth/Game.pixelSize -1){return (1 | (1 << 31));}
 ;
         Chunk chunk = ChunkList[(x/ChunkSize + (y/ChunkSize)*AmountChunkX)];
         return chunk.PixelList[(x%ChunkSize)+(y%ChunkSize)*ChunkSize];

@@ -5,12 +5,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.RectF;
 
 public class Chunk {
 
     public final Bitmap bitmap;
     private final Paint paint;
     private final ChunkHandler chunkHandler;
+    private final int chunkPosY;
+    private final int chunkPosX;
     private Matrix matrix;
     public boolean hasUpdated = true;
     public boolean willbeActive = true;
@@ -26,9 +29,9 @@ public class Chunk {
     0000 // Type
     0000 // [][][][]
 
-    0000 // Vélocité X
-    0000 // Vélocité Y
-    0000 // [][][][]
+    0000 //
+    0000 //
+    0000 //
     0000 // [][][][IsActive]
      */
 
@@ -43,6 +46,9 @@ public class Chunk {
 
         this.chunkHandler = chunkHandler;
 
+        this.chunkPosX = x*ChunkHandler.ChunkSize*Game.pixelSize;
+        this.chunkPosY = y*ChunkHandler.ChunkSize*Game.pixelSize;
+
         this.matrix = new Matrix();
         this.matrix.setTranslate(x*ChunkHandler.ChunkSize, y*ChunkHandler.ChunkSize);
         this.matrix.postScale(Game.pixelSize, Game.pixelSize);
@@ -53,11 +59,13 @@ public class Chunk {
         this.bitmap = Bitmap.createBitmap(ChunkHandler.ChunkSize, ChunkHandler.ChunkSize, Bitmap.Config.RGB_565);
     }
 
-    public void drawOnBitmap(Bitmap chunksbitmap){
+    public void drawOnBitmap(Bitmap chunksbitmap,Canvas canvas){
 
-        Canvas canvas = new Canvas(chunksbitmap);
+        //Canvas canvas = new Canvas(chunksbitmap);
         canvas.drawBitmap(bitmap, matrix, null);
-        hasUpdated = false;
+        //canvas.drawBitmap(bitmap, null, new RectF(chunkPosX, chunkPosY,chunkPosX+(Game.pixelSize*ChunkHandler.ChunkSize), chunkPosY+(Game.pixelSize*ChunkHandler.ChunkSize)), null);
+
+      //  hasUpdated = false;
     }
 
     public void drawOnScreen(int i, int amountChunkX, int amountChunkY, Canvas canvas) {
@@ -78,7 +86,7 @@ public class Chunk {
        PixelList[x+y*ChunkHandler.ChunkSize] =  data;
        PixelColor[x+y*ChunkHandler.ChunkSize] = color;
 
-        bitmap.setPixel(x , y,color);
+       bitmap.setPixel(x , y,color);
         willbeActive = true;
     }
 }

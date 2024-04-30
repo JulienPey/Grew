@@ -16,12 +16,15 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.concurrent.Future;
+
 public class Game  {
     private static final String LOGTAG = "Game";
     private final Context context;
     private final int width;
     private final int height;
     private final WorldHandler worldhandler;
+    private final ThreadPool threadpool;
     private int paintID;
     private  int t;
     public static Matrix matrix = new Matrix();
@@ -46,8 +49,15 @@ public class Game  {
 
         this.worldhandler = new WorldHandler(context,gameLoop,this);
 
-
+        this.threadpool = new ThreadPool();
         this.t = 0;
+
+        Future<?> task1 = threadpool.addThread(() -> {
+            while (true) {
+                worldhandler.update();
+                Touch();
+            }
+        });
 
     }
 
@@ -57,14 +67,16 @@ public class Game  {
 
         worldhandler.draw(canvas);
         this.Console(canvas);
+
     }
 
 
     public void Console(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLUE);
         paint.setTextSize(20);
-
+        canvas.drawRect(0,0,80,30,paint);
+        paint.setColor(Color.WHITE);
         canvas.drawText("UPS: " + gameLoop.getAverageUPS(), 10, 30, paint);
 
         Paint paint2 = new Paint();
@@ -84,8 +96,8 @@ public class Game  {
     }
 
     public void update() {
-        worldhandler.update();
-        Touch();
+      //  worldhandler.update();
+       // Touch();
     }
     public void Touch() {
 
@@ -104,9 +116,11 @@ public class Game  {
                     worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(0, 0, 0), ChunkHandler.setType( 0,0) );
 
                 } else if(paintID == 1) {
-                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb((t * 10)%255, 100, 100), ChunkHandler.setType( (1 << 31),0) + 1 );
+                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( (1 << 31),0) );
                 } else if(paintID == 2) {
                     worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(t * 10, 255, 255), ChunkHandler.setType( (1 << 31),1) + 1 );
+                } else if(paintID == 3) {
+                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb((t * 10)%200, 0, 255), ChunkHandler.setType( (1 << 31),2) + 1 );
                 }
 
             }
@@ -124,6 +138,8 @@ public class Game  {
                 paintID = 1;
             }  if(200 < motionEvent.getX()  && motionEvent.getX() < 300) {
                 paintID = 2;
+            } if(300 < motionEvent.getX()  && motionEvent.getX() < 400) {
+                paintID = 3;
             }
 
             return;
