@@ -15,6 +15,8 @@ import android.view.Display;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class ChunkHandler extends AppCompatActivity {
 
@@ -27,6 +29,7 @@ public class ChunkHandler extends AppCompatActivity {
     public static final int ChunkSize = 20;
     public final Bitmap Chunksbitmap;
     private final Matrix matrix;
+    private final ThreadPool threadpool;
     public Chunk[] ChunkList;
 
 
@@ -57,7 +60,7 @@ public class ChunkHandler extends AppCompatActivity {
             ChunkList[i].drawOnBitmap(Chunksbitmap);
         }
 
-
+        this.threadpool = new ThreadPool();
 
     }
 
@@ -85,29 +88,17 @@ public class ChunkHandler extends AppCompatActivity {
             if(chunk.hasUpdated) {
 
                 for(int j = ChunkSize * ChunkSize - 1; j >= 0; j--) {
-                    if((chunk.PixelList[j] << 31) == 0) { // pixelActive
-                        continue;
-                    }
-                    if(getType(chunk.PixelList[j]) == 1) { // verif Type Sable
-                        continue;
-                    }
-
+                        if((chunk.PixelList[j] << 31) == 0) { // pixelActive
+                            continue;
+                        }
                         // Calculez les coordonnées x et y dans le chunk actuel
                         int chunkX = (i % AmountChunkX) * ChunkSize + (j % ChunkSize);
                         int chunkY = (i / AmountChunkX) * ChunkSize + (j / ChunkSize);
 
-                        if(chunkY> Screenheight/pixelSize){
-                            chunk.PixelList[j] -=1;
+                        if(chunkY> Screenheight/pixelSize){continue;}
+                        if(getType(chunk.PixelList[j]) == 1) { // Type Sable
+                            update_sable(chunkX,chunkY);
                             continue;
-                        }
-                        if((getPixelData(chunkX,chunkY+1) >> 63) == 0){
-                            swappixel(chunkX,chunkY,chunkX,chunkY+1);
-                        } else if((getPixelData(chunkX+1,chunkY+1) >> 63) == 0){
-                            swappixel(chunkX,chunkY,chunkX+1,chunkY+1);
-                        }else  if((getPixelData(chunkX-1,chunkY+1) >> 63) == 0){
-                            swappixel(chunkX,chunkY,chunkX-1,chunkY+1);
-                        } else {
-                           // chunk.PixelList[j] -=1;
                         }
 
 
@@ -116,6 +107,18 @@ public class ChunkHandler extends AppCompatActivity {
             }
         }
 
+
+    }
+
+    private void update_sable(int worldX, int worldY) {
+
+        if((getPixelData(worldX,worldY+1) >> 63) == 0){
+            swappixel(worldX,worldY,worldX,worldY+1);
+        } else if((getPixelData(worldX+1,worldY+1) >> 63) == 0){
+            swappixel(worldX,worldY,worldX+1,worldY+1);
+        }else  if((getPixelData(worldX-1,worldY+1) >> 63) == 0){
+            swappixel(worldX,worldY,worldX-1,worldY+1);
+        }
     }
 
     public int getPixelData(int x,int y) {
@@ -157,28 +160,21 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     public int getType(int nbr) {
-        return (nbr << 4) >>20;
+        return (nbr << 4) >>24;
     }
 
     public static int setType(int originalNumber, int newType) {
-        // Créer un masque pour effacer la partie lue par getType
-        int mask = ~(15 << 20);
-
-        // Effacer la partie lue par getType dans le nombre original
+        int mask = ~(255 << 20);
         int clearedNumber = originalNumber & mask;
-
-        // Ajouter la nouvelle valeur de type
-        int newNumber = clearedNumber | (newType << 20);
-
-        return newNumber;
+        return clearedNumber | (newType << 20);
     }
 
     public void updatePixelAround(int x, int y) {
 
 
-                    Chunk chunk1 = ChunkList[(x) / ChunkSize + ((y) / ChunkSize) * AmountChunkX];
-                    int i1 =  (x % ChunkSize) + ((y % ChunkSize)) * ChunkSize;
-                    chunk1.PixelList[i1] = chunk1.PixelList[i1] | 1;
+        Chunk chunk1 = ChunkList[(x) / ChunkSize + ((y) / ChunkSize) * AmountChunkX];
+        int i1 =  (x % ChunkSize) + ((y % ChunkSize)) * ChunkSize;
+        chunk1.PixelList[i1] = chunk1.PixelList[i1] | 1;
 
         chunk1 = ChunkList[(x-1) / ChunkSize + ((y-1) / ChunkSize) * AmountChunkX];
         i1 =  ((x-1) % ChunkSize) + (((y-1) % ChunkSize)) * ChunkSize;

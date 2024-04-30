@@ -22,6 +22,7 @@ public class Game  {
     private final int width;
     private final int height;
     private final WorldHandler worldhandler;
+    private int paintID;
     private  int t;
     public static Matrix matrix = new Matrix();
     public GameLoop gameLoop;
@@ -39,6 +40,7 @@ public class Game  {
         this.width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
         this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels);
 
+        this.paintID = 2;
 
         matrix.postScale(pixelSize, pixelSize);
 
@@ -98,8 +100,14 @@ public class Game  {
                 int chunkY =  (y+j) / ChunkHandler.ChunkSize;
 
                 int chunkID = chunkX + (chunkY * worldhandler.chunkhandler.AmountChunkX);
+                if(paintID == 0){
+                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(0, 0, 0), ChunkHandler.setType( 0,0) );
 
-                worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(t * 10, 255, 255), ChunkHandler.setType(1 | (1 << 31),1));
+                } else if(paintID == 1) {
+                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb((t * 10)%255, 100, 100), ChunkHandler.setType( (1 << 31),0) + 1 );
+                } else if(paintID == 2) {
+                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(t * 10, 255, 255), ChunkHandler.setType( (1 << 31),1) + 1 );
+                }
 
             }
         }
@@ -109,6 +117,18 @@ public class Game  {
         t += 1;
         int action = motionEvent.getAction();
 
+        if(motionEvent.getY()> height){
+            if(motionEvent.getX() < 100) {
+                paintID = 0;
+            } else  if(100 < motionEvent.getX()  && motionEvent.getX() < 200) {
+                paintID = 1;
+            }  if(200 < motionEvent.getX()  && motionEvent.getX() < 300) {
+                paintID = 2;
+            }
+
+            return;
+        }
+
         if(action == MotionEvent.ACTION_DOWN){
             this.isdown = true;
         }
@@ -117,13 +137,10 @@ public class Game  {
             this.isdown = false;
         }
 
-        if(motionEvent.getY()> height){
-            return;
-        }
+
 
         this.x = (int) motionEvent.getX() / pixelSize;
         this.y = (int) motionEvent.getY() / pixelSize;
-
 
 
     }
