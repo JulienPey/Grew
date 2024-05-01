@@ -9,6 +9,7 @@ public class ThreadPool {
     private final ExecutorService threadPool;
 
     public ThreadPool() {
+
         this.threadPool = Executors.newFixedThreadPool(2);
     }
 
