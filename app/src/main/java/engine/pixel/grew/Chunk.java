@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 public class Chunk {
-
+/*
     public final Bitmap bitmap;
     private final Paint paint;
     private final ChunkHandler chunkHandler;
@@ -35,7 +35,9 @@ public class Chunk {
     0000 // [][][][IsActive]
      */
 
+
     public Chunk(int x, int y, ChunkHandler chunkHandler) {
+        /*
         PixelList = new int[ChunkHandler.ChunkSize*ChunkHandler.ChunkSize];
 
         PixelColor = new int[ChunkHandler.ChunkSize*ChunkHandler.ChunkSize];
@@ -57,8 +59,10 @@ public class Chunk {
 
 
         this.bitmap = Bitmap.createBitmap(ChunkHandler.ChunkSize, ChunkHandler.ChunkSize, Bitmap.Config.RGB_565);
-    }
 
+         */
+    }
+/*
     public void drawOnBitmap(Bitmap chunksbitmap,Canvas canvas){
 
         //Canvas canvas = new Canvas(chunksbitmap);
@@ -89,4 +93,6 @@ public class Chunk {
        bitmap.setPixel(x , y,color);
         willbeActive = true;
     }
+
+ */
 }

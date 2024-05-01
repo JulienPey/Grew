@@ -22,16 +22,20 @@ public class ChunkHandler extends AppCompatActivity {
 
     public final int pixelSize;
     private final WorldHandler worldHandler;
-    public final int AmountChunkX;
-    public final int AmountChunkY;
     private final int Screenwidth;
     private final int Screenheight;
-    public static final int ChunkSize = 20;
     public final Bitmap Chunksbitmap;
     private final Matrix matrix;
     private final ThreadPool threadpool;
+    private final Paint paint;
+    private final int worldSize;
+    private final int worldSizeX;
+    private final int worldSizeY;
+    private int t;
     public Chunk[] ChunkList;
 
+    public int[] PixelList;
+    public int[] PixelColor;
 
     public ChunkHandler(Context context, GameLoop gameLoop, WorldHandler worldHandler){
 
@@ -41,91 +45,125 @@ public class ChunkHandler extends AppCompatActivity {
         this.Screenheight = context.getResources().getDisplayMetrics().heightPixels;
 
 
-        this.AmountChunkX = (int) Math.ceil((this.Screenwidth) / (float) (this.ChunkSize*pixelSize));
-        this.AmountChunkY = (int) Math.ceil((this.Screenheight) / (float) (this.ChunkSize*pixelSize));
-
-
-        this.Chunksbitmap = Bitmap.createBitmap(Screenwidth, Screenheight, Bitmap.Config.ARGB_8888);
+        this.Chunksbitmap = Bitmap.createBitmap(Screenwidth/Game.pixelSize, Screenheight/Game.pixelSize, Bitmap.Config.ARGB_8888);
         Chunksbitmap.eraseColor( Color.BLACK);
 
         this.matrix = new Matrix();
         this.matrix.postScale(Game.pixelSize, Game.pixelSize);
 
+        worldSize = (Screenwidth/Game.pixelSize)*(Screenheight/Game.pixelSize);
+        worldSizeX = (Screenwidth/Game.pixelSize);
+        worldSizeY = (Screenheight/Game.pixelSize);
 
-        // chunk
-        ChunkList = new Chunk[this.AmountChunkX * this.AmountChunkY];
-        for (int i = 0; i < this.AmountChunkX * this.AmountChunkY; i++) {
-            ChunkList[i] = new Chunk(i % this.AmountChunkX, i / this.AmountChunkX,this);
-            ChunkList[i].initBitmap();
-           // ChunkList[i].drawOnBitmap(Chunksbitmap);
+        PixelList = new int[worldSize];
+        PixelColor = new int[worldSize];
+        for(int i =0; i < worldSize;i++){
+            PixelColor[i] = Color.BLACK;
         }
 
-        this.threadpool = new ThreadPool();
+         paint = new Paint();
 
+        this.threadpool = new ThreadPool();
+        t = 0;
     }
 
     public void draw(Canvas canvas) {
-
-        //canvas.drawBitmap(Chunksbitmap, 0,0, null);
-        for(int i = 0; i < this.AmountChunkX * this.AmountChunkY;i++){
-           // if( ChunkList[i].hasUpdated){
-                ChunkList[i].drawOnBitmap(Chunksbitmap,canvas);
-           // }
-        }
-
-
+        canvas.drawBitmap(Chunksbitmap, matrix, null);
     }
 
+    public void setPixel(int x, int y, int color, int data) {
+        PixelList[x+y*worldSizeX] =  data;
+        PixelColor[x+y*worldSizeX] = color;
+        Chunksbitmap.setPixel(x , y,color);
+
+    }
     public void update() {
-
-        for(int i = 0; i < this.AmountChunkX * this.AmountChunkY;i++){
-            ChunkList[i].hasUpdated = ChunkList[i].willbeActive;
-            ChunkList[i].willbeActive = false;
-        }
-
-        for(int i = this.AmountChunkX * this.AmountChunkY - 1; i >= 0; i--) {
-            Chunk chunk = ChunkList[i];
-            if(chunk.hasUpdated || 1 == 1) {
-
-                for(int j = ChunkSize * ChunkSize - 1; j >= 0; j--) {
-                        if((chunk.PixelList[j] << 31) == 0) { // pixelActive
-                            continue;
-                        }
-                        // Calculez les coordonnées x et y dans le chunk actuel
-                        int chunkX = (i % AmountChunkX) * ChunkSize + (j % ChunkSize);
-                        int chunkY = (i / AmountChunkX) * ChunkSize + (j / ChunkSize);
-
-                        if(chunkY> Screenheight/pixelSize){continue;}
-                        if(getType(chunk.PixelList[j]) == 1) { // Type Sable
-                            update_sable(chunkX,chunkY);
-                            continue;
-                        }
-
-                        if(getType(chunk.PixelList[j]) == 2) { // Type eau
-                            update_eau(chunkX,chunkY);
-                            continue;
-                        }
+        t++;
 
 
+
+        for(int y = worldSizeY - 1; y >= 0; y--) {
+            if(t%2 == 0){
+
+            for (int x = 0; x < worldSizeX; x++) {
+
+                if ((PixelList[x+y*worldSizeX] << 31) == 0) { // pixelActive
+                    continue;
+                }
+                updateList(x+y*worldSizeX);
+
+            }
+
+            } else {
+                for (int x = worldSizeX - 1; x >= 0; x--) {
+                    if ((PixelList[x+y*worldSizeX] << 31) == 0) { // pixelActive
+                        continue;
+                    }
+                    updateList(x+y*worldSizeX);
 
                 }
 
-                chunk.hasUpdated = false;
+
+
             }
         }
 
+        /*
+        if(t%2 == 0){
+
+            for(int i = worldSize - 1; i >= 0; i--) {
+                            if((PixelList[i] << 31) == 0) { // pixelActive
+                                continue;
+                            }
+                            updateList(i);
+
+            }
+
+        } else{
+
+            for(int y = worldSizeY - 1; y >= 0; y--) {
+                for (int x = 0; x < worldSizeX; x++) {
+
+                    if ((PixelList[x+y*worldSizeX] << 31) == 0) { // pixelActive
+                        continue;
+                    }
+                    updateList(x+y*worldSizeX);
+
+                }
+            }
+
+        }
+
+         */
+
 
     }
+
+    private void updateList(int i) {
+        int chunkX = (i % worldSizeX);
+        int chunkY = (i / worldSizeX);
+
+        if(getType(PixelList[i]) == 1) { // Type Sable
+            update_sable(chunkX,chunkY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 2) { // Type eau
+            update_eau(chunkX,chunkY);
+            return;
+        }
+    }
+
 
     private void update_eau(int worldX, int worldY) {
 
 
-        int spreadTime = 5;
+        int spreadTime = 7;
 
         for(int i = 0;i < spreadTime; i++) {
 
-            if(worldY <= 0 || worldY >= Screenheight/Game.pixelSize -1){return;}
-            if(worldX <= 0 || worldX >= Screenwidth/Game.pixelSize -1){return;}
+            if(worldY <= 0 || worldY >= worldSizeY -1){return;}
+            if(worldX <= 0 || worldX >= worldSizeX -1){return;}
 
             if ((getPixelData(worldX, worldY + 1) >> 31) == 0) {
                 swappixel(worldX, worldY, worldX, worldY + 1);
@@ -136,20 +174,22 @@ public class ChunkHandler extends AppCompatActivity {
             } else if ((getPixelData(worldX - 1, worldY) >> 31) == 0 && worldY%2 == 1) {
                 swappixel(worldX, worldY, worldX - 1, worldY);
                 worldX -= 1;
+            } else {
+                return;
             }
         }
     }
 
 
+
     private void update_sable(int worldX, int worldY) {
 
 
-        int spreadTime = 3;
+        int spreadTime = 5;
 
         for(int i = 0;i < spreadTime; i++) {
-
-            if(worldY <= 0 || worldY >= Screenheight/Game.pixelSize -1){return;}
-            if(worldX <= 0 || worldX >= Screenwidth/Game.pixelSize -1){return;}
+            if(worldY <= 0 || worldY >= worldSizeY -1){return;}
+            if(worldX <= 0 || worldX >= worldSizeX -1){return;}
 
             if ((getPixelData(worldX, worldY + 1) >> 31) == 0) {
                 swappixel(worldX, worldY, worldX, worldY + 1);
@@ -163,44 +203,36 @@ public class ChunkHandler extends AppCompatActivity {
                 worldY += 1;
                 worldX += 1;
             }
+            else{
+                return;
+            }
         }
     }
 
     public int getPixelData(int x,int y) {
 
-        if(y <= 0 || y >= Screenheight/Game.pixelSize -1){return (1 | (1 << 31));}
-        if(x <= 0 || x >= Screenwidth/Game.pixelSize -1){return (1 | (1 << 31));}
+        if(y <= 0 || y >= worldSizeY -1){return (1 | (1 << 31));}
+        if(x <= 0 || x >= worldSizeX -1){return (1 | (1 << 31));}
 ;
-        Chunk chunk = ChunkList[(x/ChunkSize + (y/ChunkSize)*AmountChunkX)];
-        return chunk.PixelList[(x%ChunkSize)+(y%ChunkSize)*ChunkSize];
+        return PixelList[x+(y*worldSizeX)];
     }
 
     public void swappixel(int x1, int y1, int x2, int y2) {
 
-        updateChunkAround(x1,y1);
-        updateChunkAround(x2,y2);
-
-
-        // Récupérer les chunks pour les deux cellules
-        Chunk chunk1 = ChunkList[x1 / ChunkSize + (y1 / ChunkSize) * AmountChunkX];
-        Chunk chunk2 = ChunkList[x2 / ChunkSize + (y2 / ChunkSize) * AmountChunkX];
-
         // Échanger les valeurs des pixels dans les deux chunks
-        int tempColor = chunk1.PixelColor[x1 % ChunkSize + (y1 % ChunkSize) * ChunkSize];
-        int tempData = chunk1.PixelList[x1 % ChunkSize + y1 % ChunkSize * ChunkSize];
+        int tempColor = PixelColor[x1 + y1 * worldSizeX];
+        int tempData = PixelList[x1 + y1 * worldSizeX];
 
-        chunk1.PixelColor[x1 % ChunkSize + (y1 % ChunkSize) * ChunkSize] = chunk2.PixelColor[x2 % ChunkSize + (y2 % ChunkSize) * ChunkSize];
-        chunk1.PixelList[x1 % ChunkSize + y1 % ChunkSize * ChunkSize] = chunk2.PixelList[x2 % ChunkSize + y2 % ChunkSize * ChunkSize];
+        PixelColor[x1 + y1 * worldSizeX] = PixelColor[x2 + y2 * worldSizeX];
+        PixelList[x1 + y1 * worldSizeX] = PixelList[x2 + y2 * worldSizeX];
 
-        chunk2.PixelColor[x2 % ChunkSize + (y2 % ChunkSize) * ChunkSize] = tempColor;
-        chunk2.PixelList[x2 % ChunkSize + y2 % ChunkSize * ChunkSize] = tempData;
+        PixelColor[x2 + y2 * worldSizeX] = tempColor;
+        PixelList[x2 + y2 * worldSizeX] = tempData;
 
-        chunk1.bitmap.setPixel(x1 % ChunkSize, y1 % ChunkSize, chunk1.PixelColor[x1 % ChunkSize + (y1 % ChunkSize) * ChunkSize] );
-        chunk2.bitmap.setPixel(x2 % ChunkSize, y2 % ChunkSize, tempColor);
+        Chunksbitmap.setPixel(x1 , y1, PixelColor[x1 + y1 * worldSizeX] );
+        Chunksbitmap.setPixel(x2, y2, tempColor);
 
-        // Marquer les chunks comme actifs
-        chunk1.willbeActive = true;
-        chunk2.willbeActive = true;
+
     }
 
 
@@ -213,7 +245,7 @@ public class ChunkHandler extends AppCompatActivity {
         int clearedNumber = originalNumber & mask;
         return clearedNumber | (newType << 20);
     }
-
+    /*
     public void updatePixelAround(int x, int y) {
 
 
@@ -231,6 +263,9 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     }
+
+     */
+    /*
     public void updateChunkAround(int x, int y) {
 
        // updatePixelAround(x,y);
@@ -261,13 +296,13 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
+     */
+
 
     public void setpixel(int x, int y, int color, int data) {
-        Chunk chunk = ChunkList[x / ChunkSize + (y/ChunkSize)* AmountChunkX];
-        chunk.PixelColor[x % ChunkSize + (y % ChunkSize) * ChunkSize] = color; // Correction ici
-        chunk.bitmap.setPixel(x % ChunkSize, y % ChunkSize, color);
-        chunk.PixelList[x % ChunkSize + y % ChunkSize * ChunkSize] = data;
-        chunk.willbeActive = true;
+        PixelColor[x  + y * worldSizeX] = color;
+        Chunksbitmap.setPixel(x , y, color);
+        PixelList[x  + y * worldSizeX] = data;
     }
 
 
