@@ -25,7 +25,7 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
     private SurfaceHolder surfaceHolder;
     private Context c;
 
-    private double averageUPS;
+    public double averageUPS;
     private double averageFPS;
 
     public GameLoop(Context context) {
@@ -161,7 +161,7 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
                 synchronized (surfaceHolder) {
                     // Mettre Ã  jour la logique du jeu
                     Game.update();
-                    updateCount++;
+                    //updateCount++;
 
                     // Dessiner sur le canvas
                     if (canvas != null) {

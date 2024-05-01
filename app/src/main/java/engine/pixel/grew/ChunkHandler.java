@@ -85,7 +85,7 @@ public class ChunkHandler extends AppCompatActivity {
 
         for(int i = this.AmountChunkX * this.AmountChunkY - 1; i >= 0; i--) {
             Chunk chunk = ChunkList[i];
-            if(chunk.hasUpdated) {
+            if(chunk.hasUpdated || 1 == 1) {
 
                 for(int j = ChunkSize * ChunkSize - 1; j >= 0; j--) {
                         if((chunk.PixelList[j] << 31) == 0) { // pixelActive
@@ -144,7 +144,7 @@ public class ChunkHandler extends AppCompatActivity {
     private void update_sable(int worldX, int worldY) {
 
 
-        int spreadTime = 1;
+        int spreadTime = 3;
 
         for(int i = 0;i < spreadTime; i++) {
 

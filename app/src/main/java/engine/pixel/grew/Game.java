@@ -1,5 +1,7 @@
 package engine.pixel.grew;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -51,11 +53,25 @@ public class Game  {
 
         this.threadpool = new ThreadPool();
         this.t = 0;
-
         Future<?> task1 = threadpool.addThread(() -> {
+            long startTime;
+            long waitTime;
             while (true) {
+                startTime = System.currentTimeMillis();
+
                 worldhandler.update();
+                gameLoop.averageUPS++;
                 Touch();
+
+                waitTime = System.currentTimeMillis() - startTime;
+                long sleepTime = (long) (1E+3 / 60) - waitTime;
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); // Re-set the interrupt flag
+                    }
+                }
             }
         });
 
@@ -75,10 +91,20 @@ public class Game  {
         Paint paint = new Paint();
         paint.setColor(Color.BLUE);
         paint.setTextSize(20);
-        canvas.drawRect(0,0,80,30,paint);
+        canvas.drawRect(0,0,100,60,paint);
         paint.setColor(Color.WHITE);
-        canvas.drawText("UPS: " + gameLoop.getAverageUPS(), 10, 30, paint);
+        canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
 
+        canvas.drawText("UPS: " + gameLoop.getAverageUPS(), 10, 60, paint);
+
+
+        //debugchunk(canvas);
+
+
+
+    }
+
+    private void debugchunk(Canvas canvas) {
         Paint paint2 = new Paint();
         paint2.setColor(Color.RED); // Couleur du contour
         paint2.setStrokeWidth(1); // Épaisseur de la ligne du contour
