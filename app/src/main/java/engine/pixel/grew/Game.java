@@ -53,6 +53,7 @@ public class Game  {
 
         this.threadpool = new ThreadPool();
         this.t = 0;
+        /*
         Future<?> task1 = threadpool.addThread(() -> {
             long startTime;
             long waitTime;
@@ -75,6 +76,8 @@ public class Game  {
             }
         });
 
+
+         */
     }
 
 
@@ -103,7 +106,7 @@ public class Game  {
 
 
     }
-
+    /*
     private void debugchunk(Canvas canvas) {
         Paint paint2 = new Paint();
         paint2.setColor(Color.RED); // Couleur du contour
@@ -121,9 +124,12 @@ public class Game  {
 
     }
 
+     */
+
     public void update() {
-      //  worldhandler.update();
-       // Touch();
+        worldhandler.update();
+        gameLoop.averageUPS++;
+        Touch();
     }
     public void Touch() {
 
@@ -134,19 +140,15 @@ public class Game  {
         for(int i =0;i < 5;i++){
             for(int j =0;j < 5;j++) {
 
-                int chunkX = (x+i) / ChunkHandler.ChunkSize;
-                int chunkY =  (y+j) / ChunkHandler.ChunkSize;
-
-                int chunkID = chunkX + (chunkY * worldhandler.chunkhandler.AmountChunkX);
                 if(paintID == 0){
-                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(0, 0, 0), ChunkHandler.setType( 0,0) );
+                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(0, 0, 0), ChunkHandler.setType( 0,0) );
 
                 } else if(paintID == 1) {
-                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( (1 << 31),0) );
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( (1 << 31),0) );
                 } else if(paintID == 2) {
-                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb(t * 10, 255, 255), ChunkHandler.setType( (1 << 31),1) + 1 );
+                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(t * 10, 255, 255), ChunkHandler.setType( (1 << 31),1) + 1 );
                 } else if(paintID == 3) {
-                    worldhandler.chunkhandler.ChunkList[chunkID].setPixel( (x+i) % ChunkHandler.ChunkSize,  (y+j) % ChunkHandler.ChunkSize, Color.rgb((t * 10)%200, 0, 255), ChunkHandler.setType( (1 << 31),2) + 1 );
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%20, 0, 255), ChunkHandler.setType( (1 << 31),2) + 1 );
                 }
 
             }
