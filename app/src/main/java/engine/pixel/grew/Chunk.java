@@ -24,16 +24,16 @@ public class Chunk {
     0000 // G
     0000 // B
 
-    0000 // [IsSolide][][][]
     0000 // Type
     0000 // Type
     0000 // [][][][]
+    0000 // [][][][]
 
-    0000 //
-    0000 //
-    0000 //
-    0000 // [][][][IsActive]
-     */
+    0000 // [][][][]
+    0000 // [][][][]
+    0000 // [][][][]
+    0000 // [][][][IsSolide]
+ */
 
 
     public Chunk(int x, int y, ChunkHandler chunkHandler) {

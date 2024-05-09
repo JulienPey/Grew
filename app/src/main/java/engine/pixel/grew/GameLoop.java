@@ -27,6 +27,7 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
     public double averageUPS;
     private double averageFPS;
+    public int updateCount;
 
     public GameLoop(Context context) {
         super(context);
@@ -61,7 +62,6 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
         surfaceHolder.addCallback(this);
         setFocusable(true);
 
-        //Initialize other stuff here later
     }
 
     public void render(Canvas c){
@@ -144,7 +144,7 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
         }
     }
     public void run() {
-        int updateCount = 0;
+        updateCount = 0;
         int frameCount = 0;
 
         long startTime;

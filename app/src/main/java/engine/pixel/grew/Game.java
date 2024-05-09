@@ -36,6 +36,7 @@ public class Game  {
     private int y;
     private boolean isdown;
 
+    private int paintIDs = 5;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -98,9 +99,13 @@ public class Game  {
         paint.setColor(Color.WHITE);
         canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
 
-        canvas.drawText("UPS: " + gameLoop.getAverageUPS(), 10, 60, paint);
+        canvas.drawText("Pixels: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
 
-
+        Paint paint2 = new Paint();
+        for(int i = 0; i < paintIDs;i++){
+            paint2.setColor(Color.rgb(i*50+50,i*20,i*70));
+            canvas.drawRect(i*100, this.height, 100*i+100, this.height+100, paint2);
+        }
         //debugchunk(canvas);
 
 
@@ -127,8 +132,9 @@ public class Game  {
      */
 
     public void update() {
+        t += 1;
         worldhandler.update();
-        gameLoop.averageUPS++;
+        gameLoop.updateCount++;
         Touch();
     }
     public void Touch() {
@@ -139,37 +145,35 @@ public class Game  {
 
         for(int i =0;i < 5;i++){
             for(int j =0;j < 5;j++) {
-
                 if(paintID == 0){
                     worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(0, 0, 0), ChunkHandler.setType( 0,0) );
 
                 } else if(paintID == 1) {
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( (1 << 31),0) );
-                } else if(paintID == 2) {
-                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(t * 10, 255, 255), ChunkHandler.setType( (1 << 31),1) + 1 );
-                } else if(paintID == 3) {
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%20, 0, 255), ChunkHandler.setType( (1 << 31),2) + 1 );
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( 1 ,0) );
+                } else if(paintID == 2 && i%2 + j%2 + (i+j+t)%3 == 0) {
+                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(t * 10, 255, 255), ChunkHandler.setType( 1 ,1)  );
+                } else if(paintID == 3 && (t+i+j)%4 == 0) {
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%20, 0, 255), ChunkHandler.setType( 3 ,2)  );
+                }else if(paintID == 4) {
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200, (t*40)%90, 20), ChunkHandler.setType( 1 ,4) );
                 }
+
 
             }
         }
     }
 
     public void TouchEvent(MotionEvent motionEvent) {
-        t += 1;
+
         int action = motionEvent.getAction();
 
         if(motionEvent.getY()> height){
-            if(motionEvent.getX() < 100) {
-                paintID = 0;
-            } else  if(100 < motionEvent.getX()  && motionEvent.getX() < 200) {
-                paintID = 1;
-            }  if(200 < motionEvent.getX()  && motionEvent.getX() < 300) {
-                paintID = 2;
-            } if(300 < motionEvent.getX()  && motionEvent.getX() < 400) {
-                paintID = 3;
-            }
+            for(int i =0;i < paintIDs; i++){
+                if(100*i < motionEvent.getX()  && motionEvent.getX() < 100*i+100) {
+                    paintID = i;
+                }
 
+            }
             return;
         }
 
