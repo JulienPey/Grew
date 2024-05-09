@@ -36,7 +36,7 @@ public class Game  {
     private int y;
     private boolean isdown;
 
-    private int paintIDs = 6;
+    private int paintIDs = 7;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -158,6 +158,8 @@ public class Game  {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200, (t*40)%90, 20), ChunkHandler.setType( 1 ,4) );
                 }else if(paintID == 5) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(40, (t*40)%20, 100), ChunkHandler.setType( 1 ,5) );
+                }else if(paintID == 6) {
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
                 }
 
 

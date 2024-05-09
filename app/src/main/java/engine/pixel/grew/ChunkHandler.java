@@ -91,28 +91,48 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     private void updateList(int i) {
-        int chunkX = (i % worldSizeX);
-        int chunkY = (i / worldSizeX);
-
+        int worldX = (i % worldSizeX);
+        int worldY = (i / worldSizeX);
         if(getType(PixelList[i]) == 1) { // Type Sable
-            update_sable(chunkX,chunkY);
+            update_sable(worldX,worldY);
             return;
         }
 
         if(getType(PixelList[i]) == 2) { // Type eau
-            update_eau(chunkX,chunkY);
+            update_eau(worldX,worldY);
             return;
         }
 
-        if(getType(PixelList[i]) == 4) { // Type CreatorEau
-            update_creatorSable(chunkX,chunkY);
+        if(getType(PixelList[i]) == 4) { // Type CreatorSable
+            update_creatorSable(worldX,worldY);
             return;
         }
 
         if(getType(PixelList[i]) == 5) { // Type CreatorEau
-            update_creatorWater(chunkX,chunkY);
+            update_creatorWater(worldX,worldY);
             return;
         }
+        if(getType(PixelList[i]) == 6) { // Type Deletor
+            update_deletor(worldX,worldY);
+            return;
+        }
+    }
+
+    private void update_deletor(int worldX, int worldY) {
+        if ((getPixelData(worldX, worldY - 1) << 31) != 0 && getType(getPixelData(worldX, worldY - 1)) != 6) {
+            setPixel(worldX, worldY - 1, Color.rgb(0, 0, 0), 0);
+            return;
+        }
+        if ((getPixelData(worldX- 1, worldY ) << 31) != 0 && getType(getPixelData(worldX- 1, worldY)) != 6) {
+            setPixel(worldX- 1, worldY , Color.rgb(0, 0, 0), 0);
+            return;
+        }
+        if ((getPixelData(worldX+ 1, worldY ) << 31) != 0 && getType(getPixelData(worldX+ 1, worldY)) != 6) {
+            setPixel(worldX+ 1, worldY , Color.rgb(0, 0, 0), 0);
+            return;
+        }
+
+        Chunksbitmap.setPixel(worldX, worldY, Color.rgb(((t*worldX*worldY)%80)+150, 0, 0));
     }
 
     private void update_creatorWater (int worldX, int worldY) {
