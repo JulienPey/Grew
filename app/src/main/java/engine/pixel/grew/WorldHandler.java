@@ -23,4 +23,8 @@ public class WorldHandler {
     public void update() {
         chunkhandler.update();
     }
+
+    public void clearSimulation() {
+        chunkhandler.clearSimulation();
+    }
 }

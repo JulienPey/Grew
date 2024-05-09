@@ -36,7 +36,7 @@ public class Game  {
     private int y;
     private boolean isdown;
 
-    private int paintIDs = 5;
+    private int paintIDs = 6;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -99,7 +99,7 @@ public class Game  {
         paint.setColor(Color.WHITE);
         canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
 
-        canvas.drawText("Pixels: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
+        canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
 
         Paint paint2 = new Paint();
         for(int i = 0; i < paintIDs;i++){
@@ -156,6 +156,8 @@ public class Game  {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%20, 0, 255), ChunkHandler.setType( 3 ,2)  );
                 }else if(paintID == 4) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200, (t*40)%90, 20), ChunkHandler.setType( 1 ,4) );
+                }else if(paintID == 5) {
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(40, (t*40)%20, 100), ChunkHandler.setType( 1 ,5) );
                 }
 
 
@@ -166,7 +168,10 @@ public class Game  {
     public void TouchEvent(MotionEvent motionEvent) {
 
         int action = motionEvent.getAction();
+        if(motionEvent.getY()< 0){
+            clearSimulation();
 
+        }
         if(motionEvent.getY()> height){
             for(int i =0;i < paintIDs; i++){
                 if(100*i < motionEvent.getX()  && motionEvent.getX() < 100*i+100) {
@@ -190,6 +195,11 @@ public class Game  {
         this.x = (int) motionEvent.getX() / pixelSize;
         this.y = (int) motionEvent.getY() / pixelSize;
 
+
+    }
+
+    private void clearSimulation() {
+            worldhandler.clearSimulation();
 
     }
 }

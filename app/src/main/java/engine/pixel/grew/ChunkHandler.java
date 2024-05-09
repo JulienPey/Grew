@@ -108,14 +108,32 @@ public class ChunkHandler extends AppCompatActivity {
             update_creatorSable(chunkX,chunkY);
             return;
         }
+
+        if(getType(PixelList[i]) == 5) { // Type CreatorEau
+            update_creatorWater(chunkX,chunkY);
+            return;
+        }
     }
+
+    private void update_creatorWater (int worldX, int worldY) {
+
+          if((t+worldX+worldY)%4 == 0) {
+
+            if ((getPixelData(worldX, worldY + 1) << 31) == 0) {
+                setPixel(worldX, worldY + 1, Color.rgb((t) % 20, 0, 255), ChunkHandler.setType(3, 2));
+            }
+        }
+        }
 
     private void update_creatorSable(int worldX, int worldY) {
 
+        if((t+worldX+worldY)%4 == 0){
 
             if ((getPixelData(worldX, worldY + 1) << 31) == 0) {
                 setPixel(worldX, worldY + 1, Color.rgb(t * 10, 255, 255), ChunkHandler.setType(1,  1));
             }
+        }
+
 
     }
 
@@ -273,4 +291,11 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
 
+    public void clearSimulation() {
+        Chunksbitmap.eraseColor( Color.BLACK);
+        for(int i =0; i < worldSize;i++){
+            PixelColor[i] = Color.BLACK;
+            PixelList[i] = 0;
+        }
+    }
 }
