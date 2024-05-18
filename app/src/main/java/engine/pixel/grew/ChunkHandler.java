@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +24,7 @@ public class ChunkHandler extends AppCompatActivity {
     private final int worldSize;
     private final int worldSizeX;
     private final int worldSizeY;
+    private int rdm;
     public  int pixelUpdatingNbr;
     private int t;
 
@@ -61,6 +63,7 @@ public class ChunkHandler extends AppCompatActivity {
 
         this.threadpool = new ThreadPool();
         t = 0;
+        rdm = 0;
     }
 
     public void draw(Canvas canvas) {
@@ -71,6 +74,7 @@ public class ChunkHandler extends AppCompatActivity {
         PixelList[x+y*worldSizeX] =  data;
         PixelColor[x+y*worldSizeX] = color;
         Chunksbitmap.setPixel(x , y,color);
+        rdm++;
 
     }
 
@@ -119,8 +123,24 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     private void update_deletor(int worldX, int worldY) {
+
+        int cell = getPixelData(worldX, worldY);
+        if(getType(getPixelData(worldX+ 1, worldY)) != 6 || getType(getPixelData(worldX- 1, worldY)) != 6  || getType(getPixelData(worldX, worldY+1)) != 6 || getType(getPixelData(worldX, worldY-1)) != 6){
+            Chunksbitmap.setPixel(worldX, worldY, Color.rgb( (int) (Math.floor(Math.random()*3)*100), 0,50));
+          //  Chunksbitmap.setPixel(worldX, worldY, Color.rgb(50, 0, (int) (Math.sin((t+worldX+worldY)/2)*50%(50)+200)));
+        } else {
+            if(getBoolean(cell,1) == 0){
+                Chunksbitmap.setPixel(worldX, worldY, Color.rgb(80, 0, 80));
+                setPixelData(worldX,worldY,setBoolean(cell,1,1));
+
+            }}
+
         if ((getPixelData(worldX, worldY - 1) << 31) != 0 && getType(getPixelData(worldX, worldY - 1)) != 6) {
             setPixel(worldX, worldY - 1, Color.rgb(0, 0, 0), 0);
+            return;
+        }
+        if ((getPixelData(worldX, worldY + 1) << 31) != 0 && getType(getPixelData(worldX, worldY + 1)) != 6) {
+            setPixel(worldX, worldY + 1, Color.rgb(0, 0, 0), 0);
             return;
         }
         if ((getPixelData(worldX- 1, worldY ) << 31) != 0 && getType(getPixelData(worldX- 1, worldY)) != 6) {
@@ -132,25 +152,38 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        Chunksbitmap.setPixel(worldX, worldY, Color.rgb(((t*worldX*worldY)%80)+150, 0, 0));
-    }
 
+            /* a réutiliser pour la lave
+             int cell = getPixelData(worldX, worldY);
+        if(getType(getPixelData(worldX+ 1, worldY)) != 6 || getType(getPixelData(worldX- 1, worldY)) != 6  || getType(getPixelData(worldX, worldY+1)) != 6 || getType(getPixelData(worldX, worldY-1)) != 6){
+
+                Chunksbitmap.setPixel(worldX, worldY, Color.rgb((int) (Math.sin((t+worldX+worldY)/2)*50%(50)+200), 0, 50));
+        } else {
+            if(getBoolean(cell,1) == 0){
+                Chunksbitmap.setPixel(worldX, worldY, Color.rgb(240, 0, 50));
+               setPixelData(worldX,worldY,setBoolean(cell,1,1));
+
+}
+             */
+
+
+                }
     private void update_creatorWater (int worldX, int worldY) {
 
-          if((t+worldX+worldY)%4 == 0) {
+          if((t+worldX+worldY)%3 == 0) {
 
             if ((getPixelData(worldX, worldY + 1) << 31) == 0) {
-                setPixel(worldX, worldY + 1, Color.rgb((t) % 20, 0, 255), ChunkHandler.setType(3, 2));
+                setPixel(worldX, worldY + 1, Color.rgb(5, 186, 243), ChunkHandler.setType(3, 2));
             }
         }
         }
 
     private void update_creatorSable(int worldX, int worldY) {
 
-        if((t+worldX+worldY)%4 == 0){
+        if((t+worldX+worldY)%3 == 0){
 
             if ((getPixelData(worldX, worldY + 1) << 31) == 0) {
-                setPixel(worldX, worldY + 1, Color.rgb(t * 10, 255, 255), ChunkHandler.setType(1,  1));
+                setPixel(worldX, worldY + 1, Color.rgb(255-rdm%30, 215-rdm%30, 168-rdm%30), ChunkHandler.setType(1,  1));
             }
         }
 
@@ -164,13 +197,15 @@ public class ChunkHandler extends AppCompatActivity {
         int xswap = 0;
         int yswap = 0;
         for(int i = 0;i < spreadTime; i++) {
-            if ((getPixelData(worldX, worldY + 1 + yswap) << 31) == 0) {
+            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0) {
                 yswap += 1;
             }
             else if ((getPixelData(worldX+1+xswap, worldY + yswap) << 31) == 0&& worldY%2 == 0) {
                 xswap += 1;
+                i--;
             } else if ((getPixelData(worldX-1+xswap, worldY + yswap) << 31) == 0&& worldY%2 == 1) {
                 xswap -= 1;
+                i--;
             } else {
                 break;
             }
@@ -180,28 +215,7 @@ public class ChunkHandler extends AppCompatActivity {
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
         }
 
-        /*
 
-        int spreadTime = 7;
-
-        for(int i = 0;i < spreadTime; i++) {
-
-
-            if ((getPixelData(worldX, worldY + 1)  << 31) == 0) {
-                swappixel(worldX, worldY, worldX, worldY + 1);
-                worldY += 1;
-            } else if ((getPixelData(worldX + 1, worldY)  << 31) == 0 && worldY%2 == 0) {
-                swappixel(worldX, worldY, worldX + 1, worldY);
-                worldX += 1;
-            } else if ((getPixelData(worldX - 1, worldY)  << 31) == 0 && worldY%2 == 1) {
-                swappixel(worldX, worldY, worldX - 1, worldY);
-                worldX -= 1;
-            } else {
-                return;
-            }
-        }
-
-         */
     }
 
 
@@ -229,12 +243,12 @@ public class ChunkHandler extends AppCompatActivity {
         int xswap = 0;
         int yswap = 0;
         for(int i = 0;i < spreadTime; i++) {
-            if ((getPixelData(worldX, worldY + 1 + yswap) << 31) == 0 || (getPixelData(worldX, worldY + 1 + yswap) >> 1) << 31 != 0) {
+            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0 || getType(PixelList[(worldX+xswap)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
                 yswap += 1;
-            }  else if ((getPixelData(worldX - 1+xswap, worldY + 1+yswap) << 31) == 0 || (getPixelData(worldX - 1+xswap, worldY + 1+yswap) >> 1) << 31 != 0) {
+            }  else if ((getPixelData(worldX - 1+xswap, worldY + 1+yswap) << 31) == 0 || getType(PixelList[(worldX+xswap-1)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
                 yswap += 1;
                 xswap -= 1;
-            }else if ((getPixelData(worldX + 1+xswap, worldY + 1+yswap) << 31) == 0 || (getPixelData(worldX + 1+xswap, worldY + 1+yswap) >> 1) << 31 != 0) {
+            }else if ((getPixelData(worldX + 1+xswap, worldY + 1+yswap) << 31) == 0 || getType(PixelList[(worldX+xswap+1)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
                 yswap += 1;
                 xswap += 1;
             }else{
@@ -246,30 +260,7 @@ public class ChunkHandler extends AppCompatActivity {
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
         }
 
-        /*
 
-        int spreadTime = 5;
-
-        for(int i = 0;i < spreadTime; i++) {
-
-            if ((getPixelData(worldX, worldY + 1) << 31) == 0) {
-                swappixel(worldX, worldY, worldX, worldY + 1);
-                worldY += 1;
-            }  else if ((getPixelData(worldX - 1, worldY + 1) << 31) == 0) {
-                swappixel(worldX, worldY, worldX - 1, worldY + 1);
-                worldY += 1;
-                worldX -= 1;
-            }else if ((getPixelData(worldX + 1, worldY + 1) << 31) == 0) {
-                swappixel(worldX, worldY, worldX + 1, worldY + 1);
-                worldY += 1;
-                worldX += 1;
-            }
-            else{
-                return;
-            }
-        }
-
-         */
     }
 
     public int getPixelData(int x,int y) {
@@ -279,6 +270,10 @@ public class ChunkHandler extends AppCompatActivity {
 ;
         return PixelList[x+(y*worldSizeX)];
     }
+    public void setPixelData(int x,int y,int data) {
+         PixelList[x+(y*worldSizeX)] = data;
+    }
+
 
     public void swappixel(int x1, int y1, int x2, int y2) {
         int index1 = x1 + y1 * worldSizeX;
@@ -299,6 +294,16 @@ public class ChunkHandler extends AppCompatActivity {
         pixelUpdatingNbr++;
     }
 
+
+    public int getBoolean(int nbr,int id) {
+        return nbr<<(31 -id) >> 31;
+    }
+
+    public int setBoolean(int originalNumber, int newType,int id) {
+        int mask = ~(1 << id);
+        int clearedNumber = originalNumber & mask;
+        return (clearedNumber | (newType << id));
+    }
 
     public int getType(int nbr) {
         return nbr>>24;

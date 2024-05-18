@@ -150,10 +150,10 @@ public class Game  {
 
                 } else if(paintID == 1) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( 1 ,0) );
-                } else if(paintID == 2 && i%2 + j%2 + (i+j+t)%3 == 0) {
+                } else if(paintID == 2 ) {
                     worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(t * 10, 255, 255), ChunkHandler.setType( 1 ,1)  );
-                } else if(paintID == 3 && (t+i+j)%4 == 0) {
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%20, 0, 255), ChunkHandler.setType( 3 ,2)  );
+                } else if(paintID == 3) {
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
                 }else if(paintID == 4) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200, (t*40)%90, 20), ChunkHandler.setType( 1 ,4) );
                 }else if(paintID == 5) {

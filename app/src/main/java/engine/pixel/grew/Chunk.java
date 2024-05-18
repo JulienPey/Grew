@@ -32,7 +32,7 @@ public class Chunk {
     0000 // [][][][]
     0000 // [][][][]
     0000 // [][][][]
-    0000 // [][][][IsSolide]
+    0000 // [][][IsInOrOut][IsSolide]
  */
 
 
