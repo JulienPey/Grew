@@ -151,7 +151,7 @@ public class Game  {
                 } else if(paintID == 1) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( 1 ,0) );
                 } else if(paintID == 2 ) {
-                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(t * 10, 255, 255), ChunkHandler.setType( 1 ,1)  );
+                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(255-(t*i*j)%30, 215-(t*i*j)%30, 168-(t*i*j)%30), ChunkHandler.setType( 1 ,1)  );
                 } else if(paintID == 3) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
                 }else if(paintID == 4) {
@@ -186,6 +186,7 @@ public class Game  {
 
         if(action == MotionEvent.ACTION_DOWN){
             this.isdown = true;
+
         }
 
         if(action == MotionEvent.ACTION_UP){

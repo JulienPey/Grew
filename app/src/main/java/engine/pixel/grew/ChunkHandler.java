@@ -193,19 +193,23 @@ public class ChunkHandler extends AppCompatActivity {
 
     private void update_eau(int worldX, int worldY) {
 
-        int spreadTime = 5;
+        int spreadTime = 20;
         int xswap = 0;
         int yswap = 0;
+        int flyingWater = 0;
         for(int i = 0;i < spreadTime; i++) {
             if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0) {
                 yswap += 1;
+                i += 5;
+
+                if(Math.random()*10 > 8){
+                    i-=5;
+                }
             }
-            else if ((getPixelData(worldX+1+xswap, worldY + yswap) << 31) == 0&& worldY%2 == 0) {
+            else if ( (getPixelData(worldX+1+xswap, worldY + yswap) << 31) == 0&& (worldY + yswap)%2 == 0) {
                 xswap += 1;
-                i--;
-            } else if ((getPixelData(worldX-1+xswap, worldY + yswap) << 31) == 0&& worldY%2 == 1) {
+            } else if ( (getPixelData(worldX-1+xswap, worldY + yswap) << 31) == 0&& (worldY + yswap)%2 == 1) {
                 xswap -= 1;
-                i--;
             } else {
                 break;
             }
@@ -222,22 +226,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     private void update_sable(int worldX, int worldY) {
 
-        /*
-        int spreadTime = 5;
-        int yswap = 0;
-        for(int i =1; i <spreadTime;i++){
-            if((getPixelData(worldX, worldY + i) << 31) == 0){
-                yswap = i;
-            } else{
-                break;
-            }
-        }
-
-        if(yswap !=0){
-            swappixel(worldX, worldY, worldX, worldY + yswap);
-        }
-
-         */
 
         int spreadTime = 5;
         int xswap = 0;
@@ -257,8 +245,21 @@ public class ChunkHandler extends AppCompatActivity {
         }
 
         if(xswap != 0 || yswap != 0){
+
+            int particleSpread = 4;
+            if(getType(PixelList[(worldX+xswap)+(worldY + yswap)*worldSizeX]) == 2 ){
+                for(int i = -particleSpread; i<particleSpread;i++){
+                    if((worldX+xswap+i) <= 0 || (worldX+xswap+i) >= worldSizeX -1){break;}
+
+                    if(getType(PixelList[(worldX+xswap+i)+(worldY + yswap)*worldSizeX]) == 0 ) {
+                        swappixel(worldX+xswap, worldY+yswap, worldX+xswap+i, worldY+yswap);
+                    }
+                    }
+                }
+
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
-        }
+            }
+
 
 
     }
