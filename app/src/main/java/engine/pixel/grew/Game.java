@@ -35,12 +35,13 @@ public class Game  {
     private int x;
     private int y;
     private boolean isdown;
+    public static int randomIncr = 0;
 
     private int paintIDs = 7;
 
     public Game(Context context,GameLoop gameLoop){
 
-
+        randomIncr++;
         this.gameLoop = gameLoop;
         this.context = context;
         this.width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
@@ -85,6 +86,7 @@ public class Game  {
 
     public void draw(Canvas canvas) {
 
+        randomIncr++;
         worldhandler.draw(canvas);
         this.Console(canvas);
 
@@ -103,6 +105,8 @@ public class Game  {
 
         Paint paint2 = new Paint();
         for(int i = 0; i < paintIDs;i++){
+
+            randomIncr++;
             paint2.setColor(Color.rgb(i*50+50,i*20,i*70));
             canvas.drawRect(i*100, this.height, 100*i+100, this.height+100, paint2);
         }
@@ -133,6 +137,8 @@ public class Game  {
 
     public void update() {
         t += 1;
+
+        randomIncr++;
         worldhandler.update();
         gameLoop.updateCount++;
         Touch();

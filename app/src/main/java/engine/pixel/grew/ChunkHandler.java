@@ -11,6 +11,9 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class ChunkHandler extends AppCompatActivity {
 
     public final int pixelSize;
@@ -27,7 +30,7 @@ public class ChunkHandler extends AppCompatActivity {
     private int rdm;
     public  int pixelUpdatingNbr;
     private int t;
-
+    private Random random = new Random();
     public int[] PixelList;
     public int[] PixelColor;
 
@@ -190,7 +193,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
-
     private void update_eau(int worldX, int worldY) {
 
         int spreadTime = 20;
@@ -198,11 +200,12 @@ public class ChunkHandler extends AppCompatActivity {
         int yswap = 0;
         int flyingWater = 0;
         for(int i = 0;i < spreadTime; i++) {
+            Game.randomIncr++;
             if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0) {
                 yswap += 1;
                 i += 5;
 
-                if(Math.random()*10 > 8){
+                if(((Game.randomIncr)%10> 8)){
                     i-=5;
                 }
             }
