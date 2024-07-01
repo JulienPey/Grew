@@ -44,8 +44,8 @@ public class ChunkHandler extends AppCompatActivity {
 
 
         this.Chunksbitmap = Bitmap.createBitmap(Screenwidth, Screenheight, Bitmap.Config.RGB_565);
-        Chunksbitmap.eraseColor( Color.BLACK);
-
+        //Chunksbitmap.eraseColor( Color.BLACK);
+        Chunksbitmap.eraseColor( Color.rgb(16,7,23));
         this.matrix = new Matrix();
         this.matrix.postScale(Game.pixelSize, Game.pixelSize);
 
@@ -58,7 +58,7 @@ public class ChunkHandler extends AppCompatActivity {
 
         this.pixelUpdatingNbr = 0;
         for(int i =0; i < worldSize;i++){
-            PixelColor[i] = Color.BLACK;
+            PixelColor[i] = Color.rgb(16,7,23);
         }
 
 
@@ -70,7 +70,7 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     public void draw(Canvas canvas) {
-         canvas.drawBitmap(Chunksbitmap, matrix, null);
+       canvas.drawBitmap(Chunksbitmap, matrix, null);
     }
 
     public void setPixel(int x, int y, int color, int data) {
@@ -126,32 +126,39 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     private void update_deletor(int worldX, int worldY) {
-
         int cell = getPixelData(worldX, worldY);
         if(getType(getPixelData(worldX+ 1, worldY)) != 6 || getType(getPixelData(worldX- 1, worldY)) != 6  || getType(getPixelData(worldX, worldY+1)) != 6 || getType(getPixelData(worldX, worldY-1)) != 6){
-            Chunksbitmap.setPixel(worldX, worldY, Color.rgb( (int) (Math.floor(Math.random()*3)*100), 0,50));
+
+            if(getBoolean(cell,1) == 0) {
+                Chunksbitmap.setPixel(worldX, worldY, Color.rgb(41, 25, 69));
+                setPixelData(worldX,worldY,setBoolean(cell,1,1));
+
+            }
           //  Chunksbitmap.setPixel(worldX, worldY, Color.rgb(50, 0, (int) (Math.sin((t+worldX+worldY)/2)*50%(50)+200)));
         } else {
             if(getBoolean(cell,1) == 0){
-                Chunksbitmap.setPixel(worldX, worldY, Color.rgb(80, 0, 80));
+
+                int rdm = (int) (Math.random()*50);
+                Chunksbitmap.setPixel(worldX, worldY, Color.rgb(26, 17, 46));
                 setPixelData(worldX,worldY,setBoolean(cell,1,1));
 
             }}
 
+
         if ((getPixelData(worldX, worldY - 1) << 31) != 0 && getType(getPixelData(worldX, worldY - 1)) != 6) {
-            setPixel(worldX, worldY - 1, Color.rgb(0, 0, 0), 0);
+            setPixel(worldX, worldY - 1, Color.rgb(16,7,23), 0);
             return;
         }
         if ((getPixelData(worldX, worldY + 1) << 31) != 0 && getType(getPixelData(worldX, worldY + 1)) != 6) {
-            setPixel(worldX, worldY + 1, Color.rgb(0, 0, 0), 0);
+            setPixel(worldX, worldY + 1,Color.rgb(16,7,23), 0);
             return;
         }
         if ((getPixelData(worldX- 1, worldY ) << 31) != 0 && getType(getPixelData(worldX- 1, worldY)) != 6) {
-            setPixel(worldX- 1, worldY , Color.rgb(0, 0, 0), 0);
+            setPixel(worldX- 1, worldY , Color.rgb(16,7,23), 0);
             return;
         }
         if ((getPixelData(worldX+ 1, worldY ) << 31) != 0 && getType(getPixelData(worldX+ 1, worldY)) != 6) {
-            setPixel(worldX+ 1, worldY , Color.rgb(0, 0, 0), 0);
+            setPixel(worldX+ 1, worldY , Color.rgb(16,7,23), 0);
             return;
         }
 
@@ -183,7 +190,7 @@ public class ChunkHandler extends AppCompatActivity {
 
     private void update_creatorSable(int worldX, int worldY) {
 
-        if((t+worldX+worldY)%3 == 0){
+        if((t+worldX+worldY)%2 == 0){
 
             if ((getPixelData(worldX, worldY + 1) << 31) == 0) {
                 setPixel(worldX, worldY + 1, Color.rgb(255-rdm%30, 215-rdm%30, 168-rdm%30), ChunkHandler.setType(1,  1));
@@ -321,9 +328,9 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     public void clearSimulation() {
-        Chunksbitmap.eraseColor( Color.BLACK);
+        Chunksbitmap.eraseColor( Color.rgb(16,7,23));
         for(int i =0; i < worldSize;i++){
-            PixelColor[i] = Color.BLACK;
+            PixelColor[i] = Color.rgb(16,7,23);
             PixelList[i] = 0;
         }
     }
