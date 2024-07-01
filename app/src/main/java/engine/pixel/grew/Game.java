@@ -29,17 +29,20 @@ public class Game  {
     public final int height;
     private final WorldHandler worldhandler;
     private final ThreadPool threadpool;
+    private int oldBrushY;
+    private int oldBrushX;
     private int paintID;
     private  int t;
     public static Matrix matrix = new Matrix();
     public GameLoop gameLoop;
     public static final int pixelSize =7 ;
-    private int x;
-    private int y;
+    private int brushX;
+    private int brushY;
     private boolean isdown;
     public static int randomIncr = 0;
+    private int brushSize = 2;
 
-    private int paintIDs = 7;
+    private int paintIDs = 8;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -57,6 +60,10 @@ public class Game  {
 
         this.threadpool = new ThreadPool();
         this.t = 0;
+
+        this.oldBrushX = 0;
+        this.oldBrushY = 0;
+
         /*
         Future<?> task1 = threadpool.addThread(() -> {
             long startTime;
@@ -154,8 +161,68 @@ public class Game  {
             return;
         }
 
-        for(int i =0;i < 5;i++){
-            for(int j =0;j < 5;j++) {
+
+        int dx = Math.abs(brushX - oldBrushX);
+        int dy = Math.abs(brushY - oldBrushY);
+        int sx = oldBrushX < brushX ? 1 : -1;
+        int sy = oldBrushY < brushY ? 1 : -1;
+        int err = dx - dy;
+        int e2;
+
+
+        int x = oldBrushX;
+        int y = oldBrushY;
+
+        while (true) {
+            // Dessine le pixel
+
+
+            for(int i =0;i < brushSize;i++){
+                for(int j =0;j < brushSize;j++) {
+                    if(paintID == 0){ // AIR
+                        worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(16,7,23), ChunkHandler.setType( 0,0) );
+
+                    } else if(paintID == 1) { // PIERRE
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 15)%50, 100, 100), ChunkHandler.setType( 1 ,3) );
+                    } else if(paintID == 2 ) { // SABLE
+                        worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(255-(t*i*j)%30, 215-(t*i*j)%30, 168-(t*i*j)%30), ChunkHandler.setType( 1 ,1)  );
+                    } else if(paintID == 3) { // EAU
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
+                    }else if(paintID == 4) { // DELETOR
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
+                    }else if(paintID == 5) { // BOIS
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 ,4) );
+                    }else if(paintID == 6) { // FEUX
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
+                    }else if(paintID == 7) { // FEUX
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
+                    }
+
+
+                }
+
+            }
+
+
+
+            // Vérifie si nous avons atteint le point final
+            if (x == brushX && y == brushY) break;
+
+            e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y += sy;
+            }
+        }
+
+
+        /*
+        for(int i =0;i < brushSize;i++){
+            for(int j =0;j < brushSize;j++) {
                 if(paintID == 0){ // AIR
                     worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(16,7,23), ChunkHandler.setType( 0,0) );
 
@@ -171,11 +238,13 @@ public class Game  {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 ,4) );
                 }else if(paintID == 6) { // FEUX
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
+                }else if(paintID == 7) { // FEUX
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
                 }
 
 
             }
-        }
+        }*/
     }
 
     public void TouchEvent(MotionEvent motionEvent) {
@@ -185,7 +254,7 @@ public class Game  {
             clearSimulation();
 
         }
-        if(motionEvent.getY()> height){
+        if(motionEvent.getY()>= height ){
             for(int i =0;i < paintIDs; i++){
                 if(100*i < motionEvent.getX()  && motionEvent.getX() < 100*i+100) {
                     paintID = i;
@@ -197,17 +266,17 @@ public class Game  {
 
         if(action == MotionEvent.ACTION_DOWN){
             this.isdown = true;
-
         }
 
         if(action == MotionEvent.ACTION_UP){
             this.isdown = false;
         }
 
+        this.oldBrushX = this.brushX;
+        this.oldBrushY = this.brushY;
 
-
-        this.x = (int) motionEvent.getX() / pixelSize;
-        this.y = (int) motionEvent.getY() / pixelSize;
+        this.brushX = (int) motionEvent.getX() / pixelSize;
+        this.brushY = (int) motionEvent.getY() / pixelSize;
 
 
     }

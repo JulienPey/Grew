@@ -120,6 +120,23 @@ public class ChunkHandler extends AppCompatActivity {
             update_feux(worldX,worldY);
             return;
         }
+
+        if(getType(PixelList[i]) == 7) { // Type FEUX
+            update_braise(worldX,worldY);
+            return;
+        }
+    }
+
+    private void update_braise(int worldX, int worldY) {
+
+        if((rdm)%60 == 0){
+            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
+            return;
+        }
+
+        if ((getPixelData(worldX, worldY - 1) << 31) == 0) {
+            setPixel(worldX, worldY - 1, Color.rgb(255, 201, 59), ChunkHandler.setType(0,  5));
+        }
     }
 
     private void update_feux(int worldX, int worldY) {
