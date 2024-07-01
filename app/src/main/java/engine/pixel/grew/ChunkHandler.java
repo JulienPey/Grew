@@ -40,7 +40,7 @@ public class ChunkHandler extends AppCompatActivity {
         this.pixelSize = Game.pixelSize;
         this.worldHandler = worldHandler;
         this.Screenwidth = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
-        this.Screenheight = context.getResources().getDisplayMetrics().heightPixels;
+        this.Screenheight = worldHandler.game.height;//context.getResources().getDisplayMetrics().heightPixels;
 
 
         this.Chunksbitmap = Bitmap.createBitmap(Screenwidth, Screenheight, Bitmap.Config.RGB_565);
@@ -77,7 +77,7 @@ public class ChunkHandler extends AppCompatActivity {
         PixelList[x+y*worldSizeX] =  data;
         PixelColor[x+y*worldSizeX] = color;
         Chunksbitmap.setPixel(x , y,color);
-        rdm++;
+        this.rdm++;
 
     }
 
@@ -98,6 +98,7 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     private void updateList(int i) {
+        this.rdm++;
         int worldX = (i % worldSizeX);
         int worldY = (i / worldSizeX);
         if(getType(PixelList[i]) == 1) { // Type Sable
@@ -110,19 +111,45 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        if(getType(PixelList[i]) == 4) { // Type CreatorSable
-            update_creatorSable(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 5) { // Type CreatorEau
-            update_creatorWater(worldX,worldY);
-            return;
-        }
         if(getType(PixelList[i]) == 6) { // Type Deletor
             update_deletor(worldX,worldY);
             return;
         }
+
+        if(getType(PixelList[i]) == 5) { // Type FEUX
+            update_feux(worldX,worldY);
+            return;
+        }
+    }
+
+    private void update_feux(int worldX, int worldY) {
+
+
+        ///// PAS 2 UPDATE PAR FRAME
+        int pixelValue = PixelList[worldX + worldY * worldSizeX];
+        if (((pixelValue & (1 << 2)) >> 2) == t % 2) {
+            return;
+        }
+        if (t % 2 == 1) {
+            PixelList[worldX + worldY * worldSizeX] += (1 << 2);
+        } else {
+            PixelList[worldX + worldY * worldSizeX] -= (1 << 2);
+        }
+
+        if((rdm)%5 == 0) {
+            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
+            return;
+        }
+
+        // Monter
+        if ((getPixelData(worldX, worldY - 1) << 31) == 0 &&  getType(getPixelData(worldX, worldY - 1)) != 5 && (worldX+t)%2 == 0  ) {
+
+
+                swappixel(worldX, worldY-1, worldX, worldY);
+        }
+
+
+
     }
 
     private void update_deletor(int worldX, int worldY) {
@@ -187,7 +214,6 @@ public class ChunkHandler extends AppCompatActivity {
             }
         }
         }
-
     private void update_creatorSable(int worldX, int worldY) {
 
         if((t+worldX+worldY)%2 == 0){

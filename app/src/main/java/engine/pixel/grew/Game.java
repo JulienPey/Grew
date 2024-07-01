@@ -5,10 +5,12 @@ import static java.lang.Thread.sleep;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -23,8 +25,8 @@ import java.util.concurrent.Future;
 public class Game  {
     private static final String LOGTAG = "Game";
     private final Context context;
-    private final int width;
-    private final int height;
+    public final int width;
+    public final int height;
     private final WorldHandler worldhandler;
     private final ThreadPool threadpool;
     private int paintID;
@@ -45,7 +47,7 @@ public class Game  {
         this.gameLoop = gameLoop;
         this.context = context;
         this.width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
-        this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels);
+        this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels)-500;
 
         this.paintID = 2;
 
@@ -105,11 +107,14 @@ public class Game  {
 
         Paint paint2 = new Paint();
         for(int i = 0; i < paintIDs;i++){
-
             randomIncr++;
             paint2.setColor(Color.rgb(i*50+50,i*20,i*70));
             canvas.drawRect(i*100, this.height, 100*i+100, this.height+100, paint2);
+
+          //  Bitmap d = BitmapFactory.decodeResource(context.getResources(), R.drawable.icone_1);
+           // canvas.drawBitmap(d, i*100,this.height, null);
         }
+//canvas.drawBitmap(d, 0,0, null);
         //debugchunk(canvas);
 
 
@@ -151,21 +156,21 @@ public class Game  {
 
         for(int i =0;i < 5;i++){
             for(int j =0;j < 5;j++) {
-                if(paintID == 0){
+                if(paintID == 0){ // AIR
                     worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(16,7,23), ChunkHandler.setType( 0,0) );
 
-                } else if(paintID == 1) {
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( 1 ,0) );
-                } else if(paintID == 2 ) {
+                } else if(paintID == 1) { // PIERRE
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 15)%50, 100, 100), ChunkHandler.setType( 1 ,3) );
+                } else if(paintID == 2 ) { // SABLE
                     worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(255-(t*i*j)%30, 215-(t*i*j)%30, 168-(t*i*j)%30), ChunkHandler.setType( 1 ,1)  );
-                } else if(paintID == 3) {
+                } else if(paintID == 3) { // EAU
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
-                }else if(paintID == 4) {
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200, (t*40)%90, 20), ChunkHandler.setType( 1 ,4) );
-                }else if(paintID == 5) {
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(40, (t*40)%20, 100), ChunkHandler.setType( 1 ,5) );
-                }else if(paintID == 6) {
+                }else if(paintID == 4) { // DELETOR
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
+                }else if(paintID == 5) { // BOIS
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 ,4) );
+                }else if(paintID == 6) { // FEUX
+                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
                 }
 
 

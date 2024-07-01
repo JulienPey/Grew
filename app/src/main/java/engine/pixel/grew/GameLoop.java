@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Runnable{
 
-    private Game Game;
+    public Game Game;
     private SurfaceHolder holder;
     private Thread drawThread;
     private boolean surfaceReady = false;
