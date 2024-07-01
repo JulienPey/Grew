@@ -62,7 +62,7 @@ public class Game  {
             while (true) {
                 startTime = System.currentTimeMillis();
 
-                worldhandler.update();
+                worldhandler.draw();
                 gameLoop.averageUPS++;
                 Touch();
 
@@ -152,7 +152,7 @@ public class Game  {
         for(int i =0;i < 5;i++){
             for(int j =0;j < 5;j++) {
                 if(paintID == 0){
-                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(0, 0, 0), ChunkHandler.setType( 0,0) );
+                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(16,7,23), ChunkHandler.setType( 0,0) );
 
                 } else if(paintID == 1) {
                     worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 10)%30, 100, 100), ChunkHandler.setType( 1 ,0) );
