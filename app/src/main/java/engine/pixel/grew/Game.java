@@ -153,13 +153,14 @@ public class Game  {
         randomIncr++;
         worldhandler.update();
         gameLoop.updateCount++;
-        Touch();
+
     }
     public void Touch() {
 
         if(!isdown){
             return;
         }
+
 
 
         int dx = Math.abs(brushX - oldBrushX);
@@ -176,7 +177,6 @@ public class Game  {
         while (true) {
             // Dessine le pixel
 
-
             for(int i =0;i < brushSize;i++){
                 for(int j =0;j < brushSize;j++) {
                     if(paintID == 0){ // AIR
@@ -191,10 +191,10 @@ public class Game  {
                     }else if(paintID == 4) { // DELETOR
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
                     }else if(paintID == 5) { // BOIS
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 ,4) );
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
                     }else if(paintID == 6) { // FEUX
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
-                    }else if(paintID == 7) { // FEUX
+                    }else if(paintID == 7) { // BRAISES (FEUX)
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
                     }
 
@@ -202,8 +202,6 @@ public class Game  {
                 }
 
             }
-
-
 
             // Vérifie si nous avons atteint le point final
             if (x == brushX && y == brushY) break;
@@ -220,31 +218,7 @@ public class Game  {
         }
 
 
-        /*
-        for(int i =0;i < brushSize;i++){
-            for(int j =0;j < brushSize;j++) {
-                if(paintID == 0){ // AIR
-                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(16,7,23), ChunkHandler.setType( 0,0) );
 
-                } else if(paintID == 1) { // PIERRE
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 15)%50, 100, 100), ChunkHandler.setType( 1 ,3) );
-                } else if(paintID == 2 ) { // SABLE
-                    worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(255-(t*i*j)%30, 215-(t*i*j)%30, 168-(t*i*j)%30), ChunkHandler.setType( 1 ,1)  );
-                } else if(paintID == 3) { // EAU
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
-                }else if(paintID == 4) { // DELETOR
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
-                }else if(paintID == 5) { // BOIS
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 ,4) );
-                }else if(paintID == 6) { // FEUX
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
-                }else if(paintID == 7) { // FEUX
-                    worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
-                }
-
-
-            }
-        }*/
     }
 
     public void TouchEvent(MotionEvent motionEvent) {
@@ -265,11 +239,18 @@ public class Game  {
         }
 
         if(action == MotionEvent.ACTION_DOWN){
+            this.brushX = (int) motionEvent.getX() / pixelSize;
+            this.brushY = (int) motionEvent.getY() / pixelSize;
+            this.oldBrushX = this.brushX;
+            this.oldBrushY = this.brushY;
             this.isdown = true;
+
+            return;
         }
 
         if(action == MotionEvent.ACTION_UP){
             this.isdown = false;
+            return;
         }
 
         this.oldBrushX = this.brushX;
@@ -278,7 +259,9 @@ public class Game  {
         this.brushX = (int) motionEvent.getX() / pixelSize;
         this.brushY = (int) motionEvent.getY() / pixelSize;
 
-
+        if(brushX < 0){brushX = 0;}
+        if(brushY < 0){brushY = 0;}
+        Touch();
     }
 
     private void clearSimulation() {
