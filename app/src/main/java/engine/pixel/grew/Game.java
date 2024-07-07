@@ -42,7 +42,7 @@ public class Game  {
     public static int randomIncr = 0;
     private int brushSize = 2;
 
-    private int paintIDs = 8;
+    private int paintIDs = 9;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -196,6 +196,8 @@ public class Game  {
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
                     }else if(paintID == 7) { // BRAISES (FEUX)
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
+                    }else if(paintID == 8) { // Lave
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(240, 0, 50), ChunkHandler.setType( 1 ,8) );
                     }
 
 

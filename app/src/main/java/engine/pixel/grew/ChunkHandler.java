@@ -82,6 +82,7 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     public void update() {
+        this.rdm++;
         pixelUpdatingNbr = 0;
         t++;
         for(int y = worldSizeY - 1; y >= 0; y--) {
@@ -125,14 +126,51 @@ public class ChunkHandler extends AppCompatActivity {
             update_braise(worldX,worldY);
             return;
         }
+
+        if(getType(PixelList[i]) == 8) { // Type FEUX
+            update_lave(worldX,worldY);
+            return;
+        }
+    }
+
+    private void update_lave(int worldX, int worldY) {
+
+
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+        for(int i = 0;i < spreadTime; i++) {
+            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0  ) {
+                yswap += 1;
+            }  else if ((getPixelData(worldX - 1+xswap, worldY + 1+yswap) << 31) == 0  ) {
+                yswap += 1;
+                xswap -= 1;
+            }else if ((getPixelData(worldX + 1+xswap, worldY + 1+yswap) << 31) == 0 ) {
+                yswap += 1;
+                xswap += 1;
+            }else if ((getPixelData(worldX + 1+xswap, worldY +yswap) << 31) == 0 && rdm%100 < 3 ) {
+                xswap += 1;
+            }else if ((getPixelData(worldX - 1+xswap, worldY +yswap) << 31) == 0 && rdm%100 < 5 ) {
+                xswap -= 1;
+            }
+
+
+            else{
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+
+
+
+
     }
 
     private void update_braise(int worldX, int worldY) {
-
-        if((rdm)%100 == 0){
-            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
-            return;
-        }
 
         if ((getPixelData(worldX, worldY - 1) << 31) == 0) {
             setPixel(worldX, worldY - 1, Color.rgb(255, 201, 59), ChunkHandler.setType(0,  5));
@@ -157,6 +195,12 @@ public class ChunkHandler extends AppCompatActivity {
         int pixelValueB = PixelList[worldX + (worldY+1) * worldSizeX];
         if (((pixelValueB & (1 << 3)) >> 3) == 1) {
             setPixel( (worldX),  (worldY+1), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
+        }
+
+
+        if((rdm)%200 < 5){
+            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
+            return;
         }
 
 
