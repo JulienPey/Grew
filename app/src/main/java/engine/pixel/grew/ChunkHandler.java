@@ -187,6 +187,47 @@ public class ChunkHandler extends AppCompatActivity {
             setPixel(worldX, worldY - 1, Color.rgb(252, 61, 0), ChunkHandler.setType(0,  9));
         }
 
+
+
+
+
+
+        if( getType(PixelList[(worldX+xswap)+(worldY + yswap+1)*worldSizeX]) == 2){
+            for(int i =0 ; i < rdm%2 + 3;i++){
+                if(getType(PixelList[(worldX+xswap)+(worldY + yswap+i)*worldSizeX]) == 2){
+                    setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(0, 0, 90), ChunkHandler.setType( 1 ,3) );
+                }
+            }
+
+        }
+
+        if( getType(PixelList[(worldX+xswap)+(worldY + yswap-1)*worldSizeX]) == 2){
+            for(int i =0 ; i < rdm%2 + 3;i++){
+                if(getType(PixelList[(worldX+xswap)+(worldY + yswap-i)*worldSizeX]) == 2){
+                    setPixel( worldX+xswap,  worldY+yswap-i , Color.rgb(0, 0, 90), ChunkHandler.setType( 1 ,3) );
+                }
+            }
+
+        }
+
+        if( getType(PixelList[(worldX+xswap-1)+(worldY + yswap)*worldSizeX]) == 2){
+            for(int i =0 ; i < rdm%2 + 3;i++){
+                if(getType(PixelList[(worldX+xswap-i)+(worldY + yswap)*worldSizeX]) == 2){
+                    setPixel( worldX+xswap-i,  worldY+yswap , Color.rgb(0, 0, 90), ChunkHandler.setType( 1 ,3) );
+                }
+            }
+
+        }
+
+        if( getType(PixelList[(worldX+xswap+1)+(worldY + yswap)*worldSizeX]) == 2){
+            for(int i =0 ; i < rdm%2 + 3;i++){
+                if(getType(PixelList[(worldX+xswap+i)+(worldY + yswap)*worldSizeX]) == 2){
+                    setPixel( worldX+xswap+i,  worldY+yswap , Color.rgb(0, 0, 90), ChunkHandler.setType( 1 ,3) );
+                }
+            }
+
+        }
+
     }
 
     private void update_braise(int worldX, int worldY) {
@@ -257,12 +298,26 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
+
+
+
         // Monter
-        if ((getPixelData(worldX, worldY - 1) << 31) == 0 &&  getType(getPixelData(worldX, worldY - 1)) != 5 && (worldX+t)%2 == 0  ) {
+        if(rdm%5 == 2){
+            if ((getPixelData(worldX-1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX-1, worldY-1, worldX, worldY);
+            }
+        } else if(rdm%5 == 1){
+            if ((getPixelData(worldX+1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX+1, worldY-1, worldX, worldY);
+            }
 
-
+        } else {
+            if ((getPixelData(worldX, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
                 swappixel(worldX, worldY-1, worldX, worldY);
+            }
+
         }
+
 
         int pixelValueG = PixelList[worldX-1 + worldY * worldSizeX];
         if (((pixelValueG & (1 << 3)) >> 3) == 1 && (rdm)%4 == 0) {
