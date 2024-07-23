@@ -35,7 +35,7 @@ public class Game  {
     private  int t;
     public static Matrix matrix = new Matrix();
     public GameLoop gameLoop;
-    public static final int pixelSize =7 ;
+    public static final int pixelSize =6 ;
     private int brushX;
     private int brushY;
     private boolean isdown;
