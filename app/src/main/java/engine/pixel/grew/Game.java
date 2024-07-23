@@ -197,7 +197,7 @@ public class Game  {
                     }else if(paintID == 7) { // BRAISES (FEUX)
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
                     }else if(paintID == 8) { // Lave
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(240, 0, 50), ChunkHandler.setType( 1 ,8) );
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(198, 29, 0), ChunkHandler.setType( 1 ,8) );
                     }
 
 

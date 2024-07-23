@@ -127,8 +127,13 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        if(getType(PixelList[i]) == 8) { // Type FEUX
+        if(getType(PixelList[i]) == 8) { // Type LAVE
             update_lave(worldX,worldY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 9) { // Type BraiseLAVE
+            update_braiseLave(worldX,worldY);
             return;
         }
     }
@@ -139,25 +144,37 @@ public class ChunkHandler extends AppCompatActivity {
         int spreadTime = 5;
         int xswap = 0;
         int yswap = 0;
+
+        int pixelValue = PixelList[worldX + worldY * worldSizeX];
+       // oneUpdateAtATime(pixelValue,worldX,worldY);
+
         for(int i = 0;i < spreadTime; i++) {
+
             if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0  ) {
                 yswap += 1;
-            }  else if ((getPixelData(worldX - 1+xswap, worldY + 1+yswap) << 31) == 0  ) {
-                yswap += 1;
-                xswap -= 1;
-            }else if ((getPixelData(worldX + 1+xswap, worldY + 1+yswap) << 31) == 0 ) {
-                yswap += 1;
-                xswap += 1;
-            }else if ((getPixelData(worldX + 1+xswap, worldY +yswap) << 31) == 0 && rdm%100 < 3 ) {
-                xswap += 1;
-            }else if ((getPixelData(worldX - 1+xswap, worldY +yswap) << 31) == 0 && rdm%100 < 5 ) {
-                xswap -= 1;
+                continue;
+            }
+            if(worldX%2 ==0) {
+                if ((getPixelData(worldX - 1 + xswap, worldY + yswap) << 31) == 0) {
+                    xswap -= 1;
+                } else if ((getPixelData(worldX + 1 + xswap, worldY + yswap) << 31) == 0) {
+                    xswap += 1;
+                } else {
+                    break;
+                }
+            } else {
+                if ((getPixelData(worldX + 1 + xswap, worldY + yswap) << 31) == 0) {
+                    xswap += 1;
+                } else if ((getPixelData(worldX - 1 + xswap, worldY + yswap) << 31) == 0) {
+                    xswap -= 1;
+                }  else {
+                    break;
+                }
+
             }
 
 
-            else{
-                break;
-            }
+
         }
 
         if(xswap != 0 || yswap != 0){
@@ -166,7 +183,9 @@ public class ChunkHandler extends AppCompatActivity {
 
 
 
-
+        if ((getPixelData(worldX, worldY - 1) << 31) == 0) {
+            setPixel(worldX, worldY - 1, Color.rgb(252, 61, 0), ChunkHandler.setType(0,  9));
+        }
 
     }
 
@@ -206,8 +225,21 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
+    private boolean oneUpdateAtATime(int pixelValue,int worldX,int worldY){
+        if (((pixelValue & (1 << 2)) >> 2) == t % 2) {
+            return false;
+        }
+        if (t % 2 == 1) {
+            PixelList[worldX + worldY * worldSizeX] += (1 << 2);
+        } else {
+            PixelList[worldX + worldY * worldSizeX] -= (1 << 2);
+        }
+        return true;
+    }
+
     private void update_feux(int worldX, int worldY) {
 
+        rdm++;
 
         ///// PAS 2 UPDATE PAR FRAME
         int pixelValue = PixelList[worldX + worldY * worldSizeX];
@@ -220,7 +252,7 @@ public class ChunkHandler extends AppCompatActivity {
             PixelList[worldX + worldY * worldSizeX] -= (1 << 2);
         }
 
-        if((rdm)%5 == 0) {
+        if((rdm)%6 == 0) {
             setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
             return;
         }
@@ -230,6 +262,57 @@ public class ChunkHandler extends AppCompatActivity {
 
 
                 swappixel(worldX, worldY-1, worldX, worldY);
+        }
+
+        int pixelValueG = PixelList[worldX-1 + worldY * worldSizeX];
+        if (((pixelValueG & (1 << 3)) >> 3) == 1 && (rdm)%4 == 0) {
+            setPixel( (worldX-1),  (worldY), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
+        }
+
+        int pixelValueD = PixelList[worldX+1 + worldY * worldSizeX];
+        if (((pixelValueD & (1 << 3)) >> 3) == 1  ) {
+            setPixel( (worldX+1),  (worldY), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
+        }
+
+        int pixelValueU = PixelList[worldX + (worldY-1) * worldSizeX];
+        if (((pixelValueU & (1 << 3)) >> 3) == 1 && (rdm)%4 == 0) {
+            setPixel( (worldX),  (worldY-1), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
+        }
+
+
+    }
+
+
+    private void update_braiseLave(int worldX, int worldY) {
+
+        rdm++;
+
+        ///// PAS 2 UPDATE PAR FRAME
+        int pixelValue = PixelList[worldX + worldY * worldSizeX];
+        if (((pixelValue & (1 << 2)) >> 2) == t % 2) {
+            return;
+        }
+        if (t % 2 == 1) {
+            PixelList[worldX + worldY * worldSizeX] += (1 << 2);
+        } else {
+            PixelList[worldX + worldY * worldSizeX] -= (1 << 2);
+        }
+
+        if((rdm)%6 == 0) {
+            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
+            return;
+        }
+
+        // Monter
+        if(rdm%2 == 0){
+            if ((getPixelData(worldX-1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX-1, worldY-1, worldX, worldY);
+            }
+        } else {
+            if ((getPixelData(worldX+1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX+1, worldY-1, worldX, worldY);
+            }
+
         }
 
         int pixelValueG = PixelList[worldX-1 + worldY * worldSizeX];
@@ -323,7 +406,6 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     }
-
     private void update_eau(int worldX, int worldY) {
 
         int spreadTime = 20;
@@ -355,9 +437,6 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     }
-
-
-
     private void update_sable(int worldX, int worldY) {
 
 
@@ -394,6 +473,43 @@ public class ChunkHandler extends AppCompatActivity {
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
             }
 
+        // INTERACTION LAVE SABLE
+
+        if( getType(PixelList[(worldX+xswap)+(worldY + yswap-1)*worldSizeX]) == 8){
+            setPixel( worldX+xswap,  worldY+yswap , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
+            int ox = worldX+xswap;
+            int oy = worldY+yswap;
+            for(int i =1 ; i < rdm%2 + 3;i++){
+                if(getType(PixelList[(worldX+xswap)+(worldY + yswap+i)*worldSizeX]) == 1){
+                    ox = worldX+xswap;
+                    oy = worldY+yswap+i;
+                setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(90, 90, 90), ChunkHandler.setType( 1 ,3) );
+                } else {
+                    break;
+                }
+            }
+            setPixel( ox,  oy , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
+
+        }
+
+       else if( getType(PixelList[(worldX+xswap)+(worldY + yswap+1)*worldSizeX]) == 8){
+            setPixel( worldX+xswap,  worldY+yswap , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
+            int ox = worldX+xswap;
+            int oy = worldY+yswap;
+            for(int i =-1 ; i > (-(rdm%2)) - 3;i--){
+                    ox = worldX+xswap;
+                    oy = worldY+yswap+i;
+                    setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(90, 90, 90), ChunkHandler.setType( 1 ,3) );
+
+            }
+            setPixel( ox,  oy , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
+
+        }
+
+        else if( getType(PixelList[(worldX+xswap+1)+(worldY + yswap)*worldSizeX]) == 8 || getType(PixelList[(worldX+xswap-1)+(worldY + yswap)*worldSizeX]) == 8){
+            setPixel( worldX+xswap,  worldY + yswap , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
+
+        }
 
 
     }
