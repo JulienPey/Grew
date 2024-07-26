@@ -7,7 +7,7 @@ public class WorldHandler {
 
     public final ChunkHandler chunkhandler;
     public final Game game;
-    private final ParticleHandler particlehandler;
+    public final ParticleHandler particlehandler;
 
     public WorldHandler(Context context, GameLoop gameLoop,Game game){
 

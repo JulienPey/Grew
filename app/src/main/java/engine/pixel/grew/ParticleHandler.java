@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ParticleHandler {
 
-    private List<Particle> particlesList;
+    public List<Particle> particlesList;
 
     public ParticleHandler(Context context, GameLoop gameLoop, WorldHandler worldHandler) {
 
@@ -35,8 +35,8 @@ public class ParticleHandler {
             particle.PosX += particle.VelocityX;
             particle.PosY += particle.VelocityY;
 
-            particle.VelocityX *= particle.AccélérationX;
-            particle.VelocityY *= particle.AccélérationY;
+            particle.VelocityX += particle.AccélérationX;
+            particle.VelocityY += particle.AccélérationY;
             particle.LiveTime -=1;
 
             if(particle.LiveTime == 0){

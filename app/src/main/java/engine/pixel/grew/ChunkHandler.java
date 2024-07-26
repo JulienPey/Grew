@@ -531,38 +531,20 @@ public class ChunkHandler extends AppCompatActivity {
         // INTERACTION LAVE SABLE
 
         if( getType(PixelList[(worldX+xswap)+(worldY + yswap-1)*worldSizeX]) == 8){
-            setPixel( worldX+xswap,  worldY+yswap , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
-            int ox = worldX+xswap;
-            int oy = worldY+yswap;
-            for(int i =1 ; i < rdm%2 + 3;i++){
+            for(int i =0 ; i < rdm%3 + 5;i++){
                 if(getType(PixelList[(worldX+xswap)+(worldY + yswap+i)*worldSizeX]) == 1){
-                    ox = worldX+xswap;
-                    oy = worldY+yswap+i;
-                setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(90, 90, 90), ChunkHandler.setType( 1 ,3) );
+                if(rdm%5 == 0){
+                    setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(255, 255, 255), ChunkHandler.setType( 1 ,3) );
+
                 } else {
-                    break;
+                    setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(200 + (rdm*7)%50, 200+ (rdm*7)%50, 200+ (rdm*7)%50), ChunkHandler.setType( 1 ,3) );
+
                 }
+                   worldHandler.particlehandler.particlesList.add(new Particle(worldX+xswap,worldY+yswap+i,0,-1,0,0, Color.argb(200,200 + (rdm*7)%50, 200+ (rdm*7)%50, 200+ (rdm*7)%50),1,rdm%50));
+
+
+                } else { break;}
             }
-            setPixel( ox,  oy , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
-
-        }
-
-       else if( getType(PixelList[(worldX+xswap)+(worldY + yswap+1)*worldSizeX]) == 8){
-            setPixel( worldX+xswap,  worldY+yswap , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
-            int ox = worldX+xswap;
-            int oy = worldY+yswap;
-            for(int i =-1 ; i > (-(rdm%2)) - 3;i--){
-                    ox = worldX+xswap;
-                    oy = worldY+yswap+i;
-                    setPixel( worldX+xswap,  worldY+yswap+i , Color.rgb(90, 90, 90), ChunkHandler.setType( 1 ,3) );
-
-            }
-            setPixel( ox,  oy , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
-
-        }
-
-        else if( getType(PixelList[(worldX+xswap+1)+(worldY + yswap)*worldSizeX]) == 8 || getType(PixelList[(worldX+xswap-1)+(worldY + yswap)*worldSizeX]) == 8){
-            setPixel( worldX+xswap,  worldY + yswap , Color.rgb(240, 240, 240), ChunkHandler.setType( 1 ,3) );
 
         }
 
