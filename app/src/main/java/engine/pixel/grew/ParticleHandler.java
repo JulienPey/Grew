@@ -16,7 +16,7 @@ public class ParticleHandler {
     public ParticleHandler(Context context, GameLoop gameLoop, WorldHandler worldHandler) {
 
       this.particlesList = new ArrayList<>();
-      particlesList.add(new Particle(50,50,0,10,1,0.90, Color.WHITE,1,100));
+   //   particlesList.add(new Particle(50,50,0,10,1,0.90, Color.WHITE,1,100));
 
        }
 

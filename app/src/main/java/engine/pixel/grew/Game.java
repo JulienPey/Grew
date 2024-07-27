@@ -194,10 +194,10 @@ public class Game  {
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
                     }else if(paintID == 6) { // FEUX
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
-                    }else if(paintID == 7) { // BRAISES (FEUX)
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
-                    }else if(paintID == 8) { // Lave
+                    }else if(paintID == 7) { // LAVE
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(198, 29, 0), ChunkHandler.setType( 1 ,8) );
+                    }else if(paintID == 8) { // Graine
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(0, 255, 0), ChunkHandler.setType( 1 ,10) );
                     }
 
 
