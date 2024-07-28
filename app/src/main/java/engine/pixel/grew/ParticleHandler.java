@@ -11,11 +11,13 @@ import java.util.List;
 
 public class ParticleHandler {
 
+    private final WorldHandler worldHandler;
     public List<Particle> particlesList;
 
     public ParticleHandler(Context context, GameLoop gameLoop, WorldHandler worldHandler) {
 
       this.particlesList = new ArrayList<>();
+      this.worldHandler = worldHandler;
    //   particlesList.add(new Particle(50,50,0,10,1,0.90, Color.WHITE,1,100));
 
        }
@@ -40,6 +42,10 @@ public class ParticleHandler {
             particle.LiveTime -=1;
 
             if(particle.LiveTime == 0){
+                particlesList.remove(particle);
+            }
+
+            if(particle.ParticleID == 2 &&  (worldHandler.chunkhandler.getPixelData(particle.PosX, particle.PosY - 1) << 31) == 0){
                 particlesList.remove(particle);
             }
            }

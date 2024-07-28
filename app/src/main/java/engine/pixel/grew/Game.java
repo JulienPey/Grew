@@ -196,8 +196,8 @@ public class Game  {
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
                     }else if(paintID == 7) { // LAVE
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(198, 29, 0), ChunkHandler.setType( 1 ,8) );
-                    }else if(paintID == 8) { // Graine
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(0, 255, 0), ChunkHandler.setType( 1 ,10) );
+                    }else if(paintID == 8) { // Acide
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(59, 198, 0), ChunkHandler.setType( 1 ,10) );
                     }
 
 

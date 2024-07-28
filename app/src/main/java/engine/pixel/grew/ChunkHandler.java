@@ -11,6 +11,10 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -83,8 +87,7 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     public void update() {
-        this.rdm++;
-        this.rdm += (int) (Math.random()*100000);
+        this.rdm = (int) (Math.random()*100000);
         pixelUpdatingNbr = 0;
         t++;
         for(int y = worldSizeY - 1; y >= 0; y--) {
@@ -139,39 +142,76 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        if(getType(PixelList[i]) == 10) { // Type Graine
-            update_graine(worldX,worldY);
+        if(getType(PixelList[i]) == 10) { // Type Acide
+            update_acide(worldX,worldY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 11) { // Type AcideProjection
+            update_AcideProjection(worldX,worldY);
             return;
         }
     }
 
-    private void update_graine(int worldX, int worldY) {
-        int spreadTime = 5;
+    private boolean IsMovable(int typeElement, int data) {
+    int type = getType(data);
+        switch (typeElement) {
+            case 0:
+                return data << 31 == 0 ;
+            case 1:
+                return data << 31 == 0 || type == 2 ||type == 10;
+            case 2:
+                return data << 31 == 0 ;
+            case 8:
+                return data << 31 == 0 || type == 10;
+            case 9:
+                return data << 31 == 0 || type == 10;
+            case 10:
+                return data << 31 == 0 ||type == 2;
+            default:
+                return false;
+        }
+    }
+
+
+    private void update_acide(int worldX, int worldY) {
+
+        int spreadTime = 20;
         int xswap = 0;
         int yswap = 0;
-        int cell = getPixelData(worldX, worldY);
+        int flyingWater = 0;
         for(int i = 0;i < spreadTime; i++) {
-            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0 || getType(PixelList[(worldX+xswap)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
+            Game.randomIncr++;
+            if (IsMovable(10,(getPixelData(worldX+xswap, worldY + 1 + yswap)))) {
                 yswap += 1;
-            } else{
+                i += 5;
 
+                if(((Game.randomIncr)%10> 8)){
+                    i-=5;
+                }
+            }
+            else if ( IsMovable(10,(getPixelData(worldX+1+xswap, worldY + yswap) )) && (worldY + yswap)%2 == 0) {
+                xswap += 1;
+            } else if ( IsMovable(10,(getPixelData(worldX-1+xswap, worldY + yswap))) && (worldY + yswap)%2 == 1) {
+                xswap -= 1;
+            } else {
                 break;
             }
         }
-        if(yswap != 0){
+
+        if(xswap != 0 || yswap != 0){
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
         }
-        setPixelData(worldX+xswap,worldY+yswap,setBoolean(cell,1,5));
-        if( (getBoolean(cell,5) == 1) ){
-            setPixel( (worldX),  (worldY-2), Color.rgb(255, 0, 0), ChunkHandler.setType( 1 ,10) );
+        if(rdm%400==7){
+            worldHandler.particlehandler.particlesList.add(new Particle(worldX+xswap,worldY+yswap,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,105, 255, 35),2,1+(rdm%40)));
+        }
+        if(IsMovable(0,(getPixelData(worldX+xswap, worldY + yswap-1)))){
+            setPixel(worldX, worldY - 1, Color.rgb(76, 255, 0), ChunkHandler.setType(0,  11));
+
         }
 
-
-
-
-
-
     }
+
 
     private void update_lave(int worldX, int worldY) {
 
@@ -185,22 +225,22 @@ public class ChunkHandler extends AppCompatActivity {
 
         for(int i = 0;i < spreadTime; i++) {
 
-            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0  ) {
+            if (IsMovable(8,(getPixelData(worldX+xswap, worldY + 1 + yswap)) )) {
                 yswap += 1;
                 continue;
             }
             if(worldX%2 ==0) {
-                if ((getPixelData(worldX - 1 + xswap, worldY + yswap) << 31) == 0) {
+                if (IsMovable(8,(getPixelData(worldX - 1 + xswap, worldY + yswap)))) {
                     xswap -= 1;
-                } else if ((getPixelData(worldX + 1 + xswap, worldY + yswap) << 31) == 0) {
+                } else if (IsMovable(8,(getPixelData(worldX + 1 + xswap, worldY + yswap) ))) {
                     xswap += 1;
                 } else {
                     break;
                 }
             } else {
-                if ((getPixelData(worldX + 1 + xswap, worldY + yswap) << 31) == 0) {
+                if (IsMovable(8,(getPixelData(worldX + 1 + xswap, worldY + yswap)))) {
                     xswap += 1;
-                } else if ((getPixelData(worldX - 1 + xswap, worldY + yswap) << 31) == 0) {
+                } else if (IsMovable(8,(getPixelData(worldX - 1 + xswap, worldY + yswap) ))) {
                     xswap -= 1;
                 }  else {
                     break;
@@ -218,7 +258,7 @@ public class ChunkHandler extends AppCompatActivity {
 
 
 
-        if ((getPixelData(worldX, worldY - 1) << 31) == 0) {
+        if (IsMovable(9,(getPixelData(worldX, worldY - 1)))) {
             setPixel(worldX, worldY - 1, Color.rgb(252, 61, 0), ChunkHandler.setType(0,  9));
         }
 
@@ -233,7 +273,6 @@ public class ChunkHandler extends AppCompatActivity {
             setPixel( worldX+xswap,  worldY+yswap, Color.rgb(0, 0, 30+((rdm*7)%90)), ChunkHandler.setType( 1 ,3));
             worldHandler.particlehandler.particlesList.add(new Particle(worldX+xswap,worldY+yswap,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,200, 200, 200),1,1+(rdm%40)));
         }
-
 
     }
 
@@ -335,8 +374,41 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
 
-    private void update_braiseLave(int worldX, int worldY) {
+    private void update_AcideProjection(int worldX, int worldY) {
+        rdm++;
+        ///// PAS 2 UPDATE PAR FRAME
+        int pixelValue = PixelList[worldX + worldY * worldSizeX];
+        if (((pixelValue & (1 << 2)) >> 2) == t % 2) {
+            return;
+        }
+        if (t % 2 == 1) {
+            PixelList[worldX + worldY * worldSizeX] += (1 << 2);
+        } else {
+            PixelList[worldX + worldY * worldSizeX] -= (1 << 2);
+        }
 
+        if((rdm)%6 == 0) {
+            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
+            return;
+        }
+
+        // Monter
+        if(rdm%2 == 0){
+            if ((getPixelData(worldX-1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX-1, worldY-1, worldX, worldY);
+            }
+        } else {
+            if ((getPixelData(worldX+1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX+1, worldY-1, worldX, worldY);
+            }
+
+        }
+
+
+    }
+
+
+    private void update_braiseLave(int worldX, int worldY) {
         rdm++;
 
         ///// PAS 2 UPDATE PAR FRAME
@@ -447,7 +519,7 @@ public class ChunkHandler extends AppCompatActivity {
         int flyingWater = 0;
         for(int i = 0;i < spreadTime; i++) {
             Game.randomIncr++;
-            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0) {
+            if (IsMovable(2,(getPixelData(worldX+xswap, worldY + 1 + yswap) ))) {
                 yswap += 1;
                 i += 5;
 
@@ -455,9 +527,9 @@ public class ChunkHandler extends AppCompatActivity {
                     i-=5;
                 }
             }
-            else if ( (getPixelData(worldX+1+xswap, worldY + yswap) << 31) == 0&& (worldY + yswap)%2 == 0) {
+            else if ( IsMovable(2,(getPixelData(worldX+1+xswap, worldY + yswap) ))&& (worldY + yswap)%2 == 0) {
                 xswap += 1;
-            } else if ( (getPixelData(worldX-1+xswap, worldY + yswap) << 31) == 0&& (worldY + yswap)%2 == 1) {
+            } else if ( IsMovable(2,(getPixelData(worldX-1+xswap, worldY + yswap)))&& (worldY + yswap)%2 == 1) {
                 xswap -= 1;
             } else {
                 break;
@@ -477,12 +549,12 @@ public class ChunkHandler extends AppCompatActivity {
         int xswap = 0;
         int yswap = 0;
         for(int i = 0;i < spreadTime; i++) {
-            if ((getPixelData(worldX+xswap, worldY + 1 + yswap) << 31) == 0 || getType(PixelList[(worldX+xswap)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
+            if (IsMovable(1,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
                 yswap += 1;
-            }  else if ((getPixelData(worldX - 1+xswap, worldY + 1+yswap) << 31) == 0 || getType(PixelList[(worldX+xswap-1)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
+            }  else if (IsMovable(1,(getPixelData(worldX - 1+xswap, worldY + 1+yswap) ))) {
                 yswap += 1;
                 xswap -= 1;
-            }else if ((getPixelData(worldX + 1+xswap, worldY + 1+yswap) << 31) == 0 || getType(PixelList[(worldX+xswap+1)+(worldY + 1 + yswap)*worldSizeX]) == 2 ) {
+            }else if (IsMovable(1,(getPixelData(worldX + 1+xswap, worldY + 1+yswap)))) {
                 yswap += 1;
                 xswap += 1;
             }else{

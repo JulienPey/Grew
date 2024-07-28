@@ -26,7 +26,7 @@ public class Chunk {
 
     0000 // Type
     0000 // Type
-    0000 // [][][][]
+    0000 // [Poid][Poid][Poid][Poid]
     0000 // [][][][]
 
     0000 // [][][][]
