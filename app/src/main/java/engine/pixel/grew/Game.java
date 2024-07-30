@@ -42,7 +42,7 @@ public class Game  {
     public static int randomIncr = 0;
     private int brushSize = 2;
 
-    private int paintIDs = 9;
+    private int paintIDs = 11;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -191,19 +191,25 @@ public class Game  {
                     }else if(paintID == 4) { // DELETOR
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
                     }else if(paintID == 5) { // BOIS
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((int)((Math.sin(((x+i)/3)+randomIncr)*3 + (y+j)*17)*50)%250, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
+                        //worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
                     }else if(paintID == 6) { // FEUX
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
                     }else if(paintID == 7) { // LAVE
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(198, 29, 0), ChunkHandler.setType( 1 ,8) );
                     }else if(paintID == 8) { // Acide
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(59, 198, 0), ChunkHandler.setType( 1 ,10) );
+                    }else if(paintID == 9) { // Dynamite
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 0, 0), ChunkHandler.setType( 1 ,13) );
+                    }else if(paintID == 10) { // DynamitePowder
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 0, 0), ChunkHandler.setType( 1 ,14) );
                     }
-
 
                 }
 
             }
+
+
 
             // Vérifie si nous avons atteint le point final
             if (x == brushX && y == brushY) break;

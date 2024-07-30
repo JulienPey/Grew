@@ -127,7 +127,7 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        if(getType(PixelList[i]) == 7) { // Type FEUX
+        if(getType(PixelList[i]) == 7) { // Type BRAISE
             update_braise(worldX,worldY);
             return;
         }
@@ -151,27 +151,97 @@ public class ChunkHandler extends AppCompatActivity {
             update_AcideProjection(worldX,worldY);
             return;
         }
-    }
 
-    private boolean IsMovable(int typeElement, int data) {
-    int type = getType(data);
-        switch (typeElement) {
-            case 0:
-                return data << 31 == 0 ;
-            case 1:
-                return data << 31 == 0 || type == 2 ||type == 10;
-            case 2:
-                return data << 31 == 0 ;
-            case 8:
-                return data << 31 == 0 || type == 10;
-            case 9:
-                return data << 31 == 0 || type == 10;
-            case 10:
-                return data << 31 == 0 ||type == 2;
-            default:
-                return false;
+        if(getType(PixelList[i]) == 12) { // Type Boum
+            update_boum(worldX,worldY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 13) { // Type Dynamite
+            update_Dynamite(worldX,worldY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 14) { // Type DynamitePowder
+            update_DynamitePowder(worldX,worldY);
+            return;
         }
     }
+
+    private void update_DynamitePowder(int worldX, int worldY) {
+        for(int x =-1; x < 1; x++) {
+            for (int y = -1; y < 1; y++) {
+                if(y == 0 && x == 0){continue;}
+                if(IsMovable( 13,getPixelData(worldX+x,worldY +y) )){
+                    setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(0,  12));
+                    return;
+                }
+            }
+        }
+
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+        for(int i = 0;i < spreadTime; i++) {
+            if (IsMovable(14,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
+                yswap += 1;
+            }  else if (IsMovable(14,(getPixelData(worldX - 1+xswap, worldY + 1+yswap) ))) {
+                yswap += 1;
+                xswap -= 1;
+            }else if (IsMovable(14,(getPixelData(worldX + 1+xswap, worldY + 1+yswap)))) {
+                yswap += 1;
+                xswap += 1;
+            }else{
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+
+
+    }
+
+    private void update_Dynamite(int worldX, int worldY) {
+        for(int x =-1; x < 1; x++) {
+            for (int y = -1; y < 1; y++) {
+                if(y == 0 && x == 0){continue;}
+                if(IsMovable( 13,getPixelData(worldX+x,worldY +y) )){
+                    setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(0,  12));
+
+                }
+            }
+        }
+    }
+
+    private void update_boum(int worldX, int worldY) {
+        int r = 5+rdm%15;
+
+        if(rdm%5 != 2){return;}
+
+        for(int x =-r; x < r; x++){
+            for(int y =-r; y < r; y++){
+                    if(Math.abs(x)*Math.abs(x)  + Math.abs(y)*Math.abs(y) < r*r){
+                        if(isInBound(worldX+x,worldY +y)&& IsMovable(12, getPixelData(worldX+x,worldY +y))){
+                            setPixel(worldX+x, worldY +y, Color.rgb(255, 100+100-(Math.abs(x)*Math.abs(x)  + Math.abs(y)*Math.abs(y)*4)%100, 0), ChunkHandler.setType(0,  5));
+                            if(rdm%7 == 1){
+                                worldHandler.particlehandler.particlesList.add(new Particle(worldX+x,worldY+y,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,255, 255, 255),1,1+(rdm%20)));
+
+                            }
+                        }
+                    }
+
+            }
+
+        }
+
+
+
+
+    }
+
 
 
     private void update_acide(int worldX, int worldY) {
@@ -206,7 +276,7 @@ public class ChunkHandler extends AppCompatActivity {
             worldHandler.particlehandler.particlesList.add(new Particle(worldX+xswap,worldY+yswap,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,105, 255, 35),2,1+(rdm%40)));
         }
         if(IsMovable(0,(getPixelData(worldX+xswap, worldY + yswap-1)))){
-            setPixel(worldX, worldY - 1, Color.rgb(76, 255, 0), ChunkHandler.setType(0,  11));
+            setPixel(worldX+xswap, worldY +yswap- 1, Color.rgb(76, 255, 0), ChunkHandler.setType(0,  11));
 
         }
 
@@ -495,19 +565,6 @@ public class ChunkHandler extends AppCompatActivity {
         }
 
 
-            /* a réutiliser pour la lave
-             int cell = getPixelData(worldX, worldY);
-        if(getType(getPixelData(worldX+ 1, worldY)) != 6 || getType(getPixelData(worldX- 1, worldY)) != 6  || getType(getPixelData(worldX, worldY+1)) != 6 || getType(getPixelData(worldX, worldY-1)) != 6){
-
-                Chunksbitmap.setPixel(worldX, worldY, Color.rgb((int) (Math.sin((t+worldX+worldY)/2)*50%(50)+200), 0, 50));
-        } else {
-            if(getBoolean(cell,1) == 0){
-                Chunksbitmap.setPixel(worldX, worldY, Color.rgb(240, 0, 50));
-               setPixelData(worldX,worldY,setBoolean(cell,1,1));
-
-}
-             */
-
 
                 }
 
@@ -592,6 +649,11 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
+
+    public boolean isInBound(int x,int y) {
+        return y > 0 && y < worldSizeY - 1 && x > 0 && x < worldSizeX - 1;
+    }
+
     public int getPixelData(int x,int y) {
 
         if(y <= 0 || y >= worldSizeY -1){return (1);}
@@ -656,11 +718,39 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
 
+
     public void clearSimulation() {
         Chunksbitmap.eraseColor( Color.rgb(16,7,23));
         for(int i =0; i < worldSize;i++){
             PixelColor[i] = Color.rgb(16,7,23);
             PixelList[i] = 0;
+        }
+    }
+
+
+    private boolean IsMovable(int typeElement, int data) {
+        int type = getType(data);
+        switch (typeElement) {
+            case 0:
+                return data << 31 == 0 ;
+            case 1:
+                return data << 31 == 0 || type == 2 ||type == 10;
+            case 2:
+                return data << 31 == 0 ;
+            case 8:
+                return data << 31 == 0 || type == 10;
+            case 9:
+                return data << 31 == 0 || type == 10;
+            case 10:
+                return data << 31 == 0 ||type == 2;
+            case 12:
+                return true;//(type != 12);
+            case 13:
+                return (type == 5 || type == 7 || type == 8 || type == 9|| type == 12);
+            case 14:
+                return data << 31 == 0 || type == 2 ||type == 10;
+            default:
+                return false;
         }
     }
 }
