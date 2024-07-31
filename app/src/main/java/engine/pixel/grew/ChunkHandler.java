@@ -147,7 +147,7 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        if(getType(PixelList[i]) == 11) { // Type AcideProjection
+        if(getType(PixelList[i]) == 11) { // Type
             update_AcideProjection(worldX,worldY);
             return;
         }
@@ -205,8 +205,8 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     private void update_Dynamite(int worldX, int worldY) {
-        for(int x =-1; x < 1; x++) {
-            for (int y = -1; y < 1; y++) {
+        for(int x =-2; x < 2; x++) {
+            for (int y = -2; y < 2; y++) {
                 if(y == 0 && x == 0){continue;}
                 if(IsMovable( 13,getPixelData(worldX+x,worldY +y) )){
                     setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(0,  12));
@@ -223,12 +223,13 @@ public class ChunkHandler extends AppCompatActivity {
 
         for(int x =-r; x < r; x++){
             for(int y =-r; y < r; y++){
-                    if(Math.abs(x)*Math.abs(x)  + Math.abs(y)*Math.abs(y) < r*r){
+                    if(x*x  + y*y < r*r){
                         if(isInBound(worldX+x,worldY +y)&& IsMovable(12, getPixelData(worldX+x,worldY +y))){
-                            setPixel(worldX+x, worldY +y, Color.rgb(255, 100+100-(Math.abs(x)*Math.abs(x)  + Math.abs(y)*Math.abs(y)*4)%100, 0), ChunkHandler.setType(0,  5));
-                            if(rdm%7 == 1){
-                                worldHandler.particlehandler.particlesList.add(new Particle(worldX+x,worldY+y,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,255, 255, 255),1,1+(rdm%20)));
-
+                            if(rdm%50 == 1){
+                               // worldHandler.particlehandler.particlesList.add(new Particle(worldX+x,worldY+y,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,255, 255, 255),1,30+(rdm%20)));
+                                setPixel(worldX+x, worldY +y, Color.rgb(255, 255, 255), ChunkHandler.setType(0,  5));
+                            } else {
+                                setPixel(worldX+x, worldY +y, Color.rgb(255, 100+100-(x*x  + y*y*4)%100, 0), ChunkHandler.setType(0,  5));
                             }
                         }
                     }

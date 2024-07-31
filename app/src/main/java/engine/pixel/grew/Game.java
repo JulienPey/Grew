@@ -35,14 +35,14 @@ public class Game  {
     private  int t;
     public static Matrix matrix = new Matrix();
     public GameLoop gameLoop;
-    public static final int pixelSize =6 ;
+    public static final int pixelSize =6;
     private int brushX;
     private int brushY;
     private boolean isdown;
     public static int randomIncr = 0;
     private int brushSize = 2;
 
-    private int paintIDs = 11;
+    private int paintIDs = 12;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -50,7 +50,7 @@ public class Game  {
         this.gameLoop = gameLoop;
         this.context = context;
         this.width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
-        this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels)-500;
+        this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels)-100;
 
         this.paintID = 2;
 
@@ -97,29 +97,39 @@ public class Game  {
 
         randomIncr++;
         worldhandler.draw(canvas);
+
+
         this.Console(canvas);
+
+
 
     }
 
 
     public void Console(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
         paint.setTextSize(20);
-        canvas.drawRect(0,0,100,60,paint);
         paint.setColor(Color.WHITE);
         canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
 
         canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
 
         Paint paint2 = new Paint();
-        for(int i = 0; i < paintIDs;i++){
-            randomIncr++;
-            paint2.setColor(Color.rgb(i*50+50,i*20,i*70));
-            canvas.drawRect(i*100, this.height, 100*i+100, this.height+100, paint2);
 
-          //  Bitmap d = BitmapFactory.decodeResource(context.getResources(), R.drawable.icone_1);
-           // canvas.drawBitmap(d, i*100,this.height, null);
+
+
+        for(int i = 0; i < paintIDs;i++){
+
+            randomIncr++;
+
+            int enbas = 0;
+            if(i >= 11){
+                enbas = 50;
+            }
+            paint2.setColor(Color.rgb(i*50+50+ enbas,i*20,i*70+enbas));
+            canvas.drawRect(i*100, this.height+enbas, 100*i+100, this.height+100+enbas, paint2);
+
+
         }
 //canvas.drawBitmap(d, 0,0, null);
         //debugchunk(canvas);
@@ -200,9 +210,9 @@ public class Game  {
                     }else if(paintID == 8) { // Acide
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(59, 198, 0), ChunkHandler.setType( 1 ,10) );
                     }else if(paintID == 9) { // Dynamite
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 0, 0), ChunkHandler.setType( 1 ,13) );
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200+randomIncr%40, (randomIncr%2)*50, (randomIncr%2)*50), ChunkHandler.setType( 1 ,13) );
                     }else if(paintID == 10) { // DynamitePowder
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 0, 0), ChunkHandler.setType( 1 ,14) );
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(20+randomIncr%40, 10+randomIncr%20, 10+randomIncr%20), ChunkHandler.setType( 1 ,14) );
                     }
 
                 }
