@@ -147,7 +147,7 @@ public class ChunkHandler extends AppCompatActivity {
             return;
         }
 
-        if(getType(PixelList[i]) == 11) { // Type
+        if(getType(PixelList[i]) == 11) { // Type AcideProjection
             update_AcideProjection(worldX,worldY);
             return;
         }
@@ -273,14 +273,42 @@ public class ChunkHandler extends AppCompatActivity {
         if(xswap != 0 || yswap != 0){
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
         }
-        if(rdm%400==7){
+        else if(rdm%400==7){
             worldHandler.particlehandler.particlesList.add(new Particle(worldX+xswap,worldY+yswap,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,105, 255, 35),2,1+(rdm%40)));
         }
+
+
+        boolean hasdestroyed = false;
+
+        if(IsMovable(15,(getPixelData(worldX+xswap, worldY + yswap-1)))){
+            setPixel(worldX+xswap, worldY +yswap- 1, Color.rgb(16,7,23), ChunkHandler.setType(0,  0));
+            hasdestroyed = true;
+        }
+
+        if(IsMovable(15,(getPixelData(worldX+xswap, worldY + yswap+1)))){
+            setPixel(worldX+xswap, worldY +yswap+ 1, Color.rgb(16,7,23), ChunkHandler.setType(0,  0));
+            hasdestroyed = true;
+        }
+        if(IsMovable(15,(getPixelData(worldX+xswap, worldY + yswap+1)))){
+            setPixel(worldX+xswap+1, worldY +yswap, Color.rgb(16,7,23), ChunkHandler.setType(0,  0));
+            hasdestroyed = true;
+        }
+        if(IsMovable(15,(getPixelData(worldX+xswap, worldY + yswap+1)))){
+            setPixel(worldX+xswap-1, worldY +yswap, Color.rgb(16,7,23), ChunkHandler.setType(0,  0));
+            hasdestroyed = true;
+        }
+
+        // up
         if(IsMovable(0,(getPixelData(worldX+xswap, worldY + yswap-1)))){
             setPixel(worldX+xswap, worldY +yswap- 1, Color.rgb(76, 255, 0), ChunkHandler.setType(0,  11));
 
         }
 
+        if(hasdestroyed){
+            if(rdm%2 == 0){
+                setPixel(worldX+xswap, worldY +yswap, Color.rgb(16,7,23), ChunkHandler.setType(0,  0));
+            }
+        }
     }
 
 
@@ -750,6 +778,8 @@ public class ChunkHandler extends AppCompatActivity {
                 return (type == 5 || type == 7 || type == 8 || type == 9|| type == 12);
             case 14:
                 return data << 31 == 0 || type == 2 ||type == 10;
+            case 15:
+                return type != 15 && type != 10 & type != 0 && type != 6 && type != 11;
             default:
                 return false;
         }
