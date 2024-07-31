@@ -16,11 +16,13 @@ public class MainActivity extends AppCompatActivity {
         // Masquer la barre de statut (en haut de l'écran)
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        /*
         // Masquer la barre de navigation (en bas de l'écran)
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+         */
 
 
         gameLoop = new GameLoop(MainActivity.this);//Initialize the gameLoop instance

@@ -39,10 +39,15 @@ public class Game  {
     private int brushX;
     private int brushY;
     private boolean isdown;
+    private boolean isunder;
+
     public static int randomIncr = 0;
     private int brushSize = 2;
 
-    private int paintIDs = 12;
+    private int paintIDs = 24;
+
+    private int decalagePaintBoxes = 0;
+    private int boxWidth = 130;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -50,7 +55,7 @@ public class Game  {
         this.gameLoop = gameLoop;
         this.context = context;
         this.width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
-        this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels)-100;
+        this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels)-2*boxWidth;
 
         this.paintID = 2;
 
@@ -123,11 +128,11 @@ public class Game  {
             randomIncr++;
 
             int enbas = 0;
-            if(i >= 11){
-                enbas = 50;
+            if(i%2 == 1){
+                enbas = boxWidth;
             }
             paint2.setColor(Color.rgb(i*50+50+ enbas,i*20,i*70+enbas));
-            canvas.drawRect(i*100, this.height+enbas, 100*i+100, this.height+100+enbas, paint2);
+            canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint2);
 
 
         }
@@ -242,18 +247,35 @@ public class Game  {
     public void TouchEvent(MotionEvent motionEvent) {
 
         int action = motionEvent.getAction();
-        if(motionEvent.getY()< 0){
+       /* if(motionEvent.getY()< 0){
             clearSimulation();
 
         }
+        */
+
+
+        // TOUT CE QU'IL SE PASSE DANS LES BOUTONS
         if(motionEvent.getY()>= height ){
-            for(int i =0;i < paintIDs; i++){
-                if(100*i < motionEvent.getX()  && motionEvent.getX() < 100*i+100) {
-                    paintID = i;
+
+            if(action == MotionEvent.ACTION_DOWN){
+            if(motionEvent.getX() < boxWidth*paintIDs){
+                int xpos = (int)(motionEvent.getX() + decalagePaintBoxes)/boxWidth;
+                int ypos = motionEvent.getY()>= height+boxWidth ? 1 : 0;
+                paintID = xpos*2 + ypos;
+            }
+            this.brushX = (int) motionEvent.getX() / pixelSize;
+            this.isdown = false;
+            return;
+            } else{
+                decalagePaintBoxes += (brushX -  (int) motionEvent.getX() / pixelSize)*5;
+                if(decalagePaintBoxes < 0){
+                    decalagePaintBoxes = 0;
+                }
+                if (decalagePaintBoxes + width>= boxWidth*paintIDs/2){
+                    decalagePaintBoxes = boxWidth*paintIDs/2 - width;
                 }
 
             }
-            return;
         }
 
         if(action == MotionEvent.ACTION_DOWN){
