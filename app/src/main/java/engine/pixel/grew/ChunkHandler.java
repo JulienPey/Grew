@@ -153,7 +153,7 @@ public class ChunkHandler extends AppCompatActivity {
         }
 
         if(getType(PixelList[i]) == 12) { // Type Boum
-            update_boum(worldX,worldY);
+            update_boum(worldX,worldY,5);
             return;
         }
 
@@ -166,6 +166,189 @@ public class ChunkHandler extends AppCompatActivity {
             update_DynamitePowder(worldX,worldY);
             return;
         }
+
+        // 15 = antiacide
+
+        if(getType(PixelList[i]) == 16) { // Type Nytroglicerine
+            update_Nytroglicerine(worldX,worldY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 17) { // Type Boum ++
+            update_boum(worldX,worldY,25);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 18) { // Type Humain
+            update_HumainPied(worldX,worldY);
+            return;
+        }
+
+        if(getType(PixelList[i]) == 19) { // Type Humain
+            update_HumainTete(worldX,worldY);
+            return;
+        }
+        if(getType(PixelList[i]) == 20) { // Type Blood
+            update_blood(worldX,worldY);
+            return;
+        }
+
+
+    }
+
+    private void update_blood(int worldX, int worldY) {
+
+        int spreadTime = 20;
+        int xswap = 0;
+        int yswap = 0;
+        for(int i = 0;i < spreadTime; i++) {
+            Game.randomIncr++;
+            if (IsMovable(20,(getPixelData(worldX+xswap, worldY + 1 + yswap)))) {
+                yswap += 1;
+                i += 5;
+
+                if(((Game.randomIncr)%10> 8)){
+                    i-=5;
+                }
+            }
+            else if ( IsMovable(20,(getPixelData(worldX+1+xswap, worldY + yswap) )) && (worldY + yswap)%2 == 0) {
+                xswap += 1;
+            } else if ( IsMovable(20,(getPixelData(worldX-1+xswap, worldY + yswap))) && (worldY + yswap)%2 == 1) {
+                xswap -= 1;
+            } else {
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+
+    }
+
+    private void update_HumainTete(int worldX, int worldY) {
+        if(getType(getPixelData(worldX,worldY +1 )) != 18){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+
+    }
+
+    private void update_HumainPied(int worldX, int worldY) {
+
+
+
+        if(getType(getPixelData(worldX,worldY -1)) != 19){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+        int data = getPixelData(worldX,worldY);
+        if(!oneUpdateAtATime(data,worldX,worldY)){
+            return;
+        }
+
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+
+
+        int goDroite =  getBoolean(data,4);
+        int goGauche =  getBoolean(data,5);
+
+        Log.e("Droite", String.valueOf(goDroite));
+
+        if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%40 == 0){
+            int rdm2 = (int) (Math.random()*50);
+            if(rdm2 < 20){
+                goDroite = 0;
+                goGauche = 1;
+            } else if (rdm2 > 30){
+                goDroite = 1;
+                goGauche = 0;
+            } else {
+                goDroite = 1;
+                goGauche = 1;
+            }
+
+            data = setBoolean(data,goDroite,4);
+            data = setBoolean(data,goGauche,5);
+            setPixelData(worldX,worldY,data);
+        }
+
+        for(int i = 0;i < spreadTime; i++) {
+            if (IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
+                yswap += 1;
+            } else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-1) ))) {
+                xswap += 1;
+                break;
+            } else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-1) ))) {
+                xswap -= 1;
+                break;
+            }else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-2) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-3) ))) {
+                xswap -= 1;
+                yswap -= 2;
+                break;
+            }else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-2) )) && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-3) ))) {
+                xswap += 1;
+                yswap -= 2;
+                break;
+            }
+
+            else{
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+            swappixel(worldX+xswap, worldY+yswap-1, worldX, worldY-1);
+        }
+
+
+    }
+
+    private void update_Nytroglicerine(int worldX, int worldY) {
+        for(int x =-1; x < 1; x++) {
+            for (int y = -1; y < 1; y++) {
+                if(y == 0 && x == 0){continue;}
+                if(IsMovable( 13,getPixelData(worldX+x,worldY +y) )){
+                    setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(0,  17));
+                    return;
+                }
+            }
+        }
+
+
+
+        int spreadTime = 20;
+        int xswap = 0;
+        int yswap = 0;
+        for(int i = 0;i < spreadTime; i++) {
+            Game.randomIncr++;
+            if (IsMovable(16,(getPixelData(worldX+xswap, worldY + 1 + yswap)))) {
+                yswap += 1;
+                i += 5;
+
+                if(((Game.randomIncr)%10> 8)){
+                    i-=5;
+                }
+            }
+            else if ( IsMovable(16,(getPixelData(worldX+1+xswap, worldY + yswap) )) && (worldY + yswap)%2 == 0) {
+                xswap += 1;
+            } else if ( IsMovable(16,(getPixelData(worldX-1+xswap, worldY + yswap))) && (worldY + yswap)%2 == 1) {
+                xswap -= 1;
+            } else {
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+
     }
 
     private void update_DynamitePowder(int worldX, int worldY) {
@@ -216,8 +399,8 @@ public class ChunkHandler extends AppCompatActivity {
         }
     }
 
-    private void update_boum(int worldX, int worldY) {
-        int r = 5+rdm%15;
+    private void update_boum(int worldX, int worldY,int radius) {
+        int r = radius+rdm%15;
 
         if(rdm%5 != 2){return;}
 
@@ -763,7 +946,7 @@ public class ChunkHandler extends AppCompatActivity {
             case 0:
                 return data << 31 == 0 ;
             case 1:
-                return data << 31 == 0 || type == 2 ||type == 10;
+                return data << 31 == 0 || type == 2 ||type == 10 ||type == 20 || type == 16;
             case 2:
                 return data << 31 == 0 ;
             case 8:
@@ -780,6 +963,13 @@ public class ChunkHandler extends AppCompatActivity {
                 return data << 31 == 0 || type == 2 ||type == 10;
             case 15:
                 return type != 15 && type != 10 & type != 0 && type != 6 && type != 11;
+            case 16:
+                return data << 31 == 0 ||type == 2 ||type == 10;
+            case 20:
+                return data << 31 == 0 ||type == 2 ||type == 10 || type == 16;
+
+            case 18:
+                return data << 31 == 0 || type == 2 ||type == 10  ||type == 20;
             default:
                 return false;
         }

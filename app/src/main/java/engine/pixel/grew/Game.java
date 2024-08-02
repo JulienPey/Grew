@@ -200,6 +200,7 @@ public class Game  {
                     } else if(paintID == 1) { // PIERRE
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 15)%50, 100, 100), ChunkHandler.setType( 1 ,3) );
                     } else if(paintID == 2 ) { // SABLE
+                        randomIncr++;
                         worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(255-(t*i*j)%30, 215-(t*i*j)%30, 168-(t*i*j)%30), ChunkHandler.setType( 1 ,1)  );
                     } else if(paintID == 3) { // EAU
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
@@ -217,13 +218,34 @@ public class Game  {
                     }else if(paintID == 9) { // Dynamite
                         worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200+randomIncr%40, (randomIncr%2)*50, (randomIncr%2)*50), ChunkHandler.setType( 1 ,13) );
                     }else if(paintID == 10) { // DynamitePowder
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(20+randomIncr%40, 10+randomIncr%20, 10+randomIncr%20), ChunkHandler.setType( 1 ,14) );
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(40+randomIncr%30, 25+randomIncr%15, 25+randomIncr%15), ChunkHandler.setType( 1 ,14) );
+                    }
+                    else if(paintID == 11) { // ColoredPowder
+                        randomIncr++;
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, randomIncr*8%150, 255), ChunkHandler.setType( 1 ,1) );
+                    }
+                    else if(paintID == 12) { // NytroGlicérine
+                        randomIncr++;
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(randomIncr*8%150, 255, randomIncr*8%150), ChunkHandler.setType( 1 ,16) );
                     }
 
+                    else if(paintID == 13) { // AntiCorosif
+                        randomIncr++;
+                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 255, 255), ChunkHandler.setType( 1 ,15) );
+                    }
+                    else if(paintID == 14) { // Humain (mis en bas)
+
+                    }
                 }
 
             }
 
+            if(paintID == 14 && randomIncr%3 == 0) { // Humain
+                randomIncr++;
+                worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
+
+            }
 
 
             // Vérifie si nous avons atteint le point final

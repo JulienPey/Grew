@@ -31,7 +31,7 @@ public class Chunk {
 
     0000 // [][][][]
     0000 // [][][][]
-    0000 // [][][][]
+    0000 // [][][G][D]
     0000 // [][UpdatedTickIsPaire][IsInOrOut][IsSolide]
  */
 
