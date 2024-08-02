@@ -194,57 +194,98 @@ public class Game  {
 
             for(int i =0;i < brushSize;i++){
                 for(int j =0;j < brushSize;j++) {
-                    if(paintID == 0){ // AIR
-                        worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j), Color.rgb(16,7,23), ChunkHandler.setType( 0,0) );
-
-                    } else if(paintID == 1) { // PIERRE
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j) , Color.rgb((t * 15)%50, 100, 100), ChunkHandler.setType( 1 ,3) );
-                    } else if(paintID == 2 ) { // SABLE
-                        randomIncr++;
-                        worldhandler.chunkhandler.setPixel( (x+i) ,  (y+j) , Color.rgb(255-(t*i*j)%30, 215-(t*i*j)%30, 168-(t*i*j)%30), ChunkHandler.setType( 1 ,1)  );
-                    } else if(paintID == 3) { // EAU
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(5, 186, 243), ChunkHandler.setType( 3 ,2)  );
-                    }else if(paintID == 4) { // DELETOR
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((t)%10+20, 0, (t)%10+20), ChunkHandler.setType( 1 ,6) );
-                    }else if(paintID == 5) { // BOIS
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb((int)((Math.sin(((x+i)/3)+randomIncr)*3 + (y+j)*17)*50)%250, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
-                        //worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(95+(y*j)*4%40, 76, 69), ChunkHandler.setType( 1 | (1 << 3)  ,4) );
-                    }else if(paintID == 6) { // FEUX
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 201, 59), ChunkHandler.setType( 0 ,5) );
-                    }else if(paintID == 7) { // LAVE
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(198, 29, 0), ChunkHandler.setType( 1 ,8) );
-                    }else if(paintID == 8) { // Acide
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(59, 198, 0), ChunkHandler.setType( 1 ,10) );
-                    }else if(paintID == 9) { // Dynamite
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(200+randomIncr%40, (randomIncr%2)*50, (randomIncr%2)*50), ChunkHandler.setType( 1 ,13) );
-                    }else if(paintID == 10) { // DynamitePowder
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(40+randomIncr%30, 25+randomIncr%15, 25+randomIncr%15), ChunkHandler.setType( 1 ,14) );
+                    if(i+x == 0 || i+x >= width/pixelSize || y+j == 0 || y+j+1 >= height/pixelSize){
+                        continue;
                     }
-                    else if(paintID == 11) { // ColoredPowder
-                        randomIncr++;
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, randomIncr*8%150, 255), ChunkHandler.setType( 1 ,1) );
-                    }
-                    else if(paintID == 12) { // NytroGlicérine
-                        randomIncr++;
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(randomIncr*8%150, 255, randomIncr*8%150), ChunkHandler.setType( 1 ,16) );
-                    }
-
-                    else if(paintID == 13) { // AntiCorosif
-                        randomIncr++;
-                        worldhandler.chunkhandler.setPixel( (x+i),  (y+j), Color.rgb(255, 255, 255), ChunkHandler.setType( 1 ,15) );
-                    }
-                    else if(paintID == 14) { // Humain (mis en bas)
-
+                    switch (paintID) {
+                        case 0: // AIR
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
+                            break;
+                        case 1: // PIERRE
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb((t * 15) % 50, 100, 100), ChunkHandler.setType(1, 3));
+                            break;
+                        case 2: // SABLE
+                            randomIncr++;
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255 - (t * i * j) % 30, 215 - (t * i * j) % 30, 168 - (t * i * j) % 30), ChunkHandler.setType(1, 1));
+                            break;
+                        case 3: // EAU
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(5, 186, 243), ChunkHandler.setType(3, 2));
+                            break;
+                        case 4: // DELETOR
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb((t) % 10 + 20, 0, (t) % 10 + 20), ChunkHandler.setType(1, 6));
+                            break;
+                        case 5: // BOIS
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb((int) ((Math.sin(((x + i) / 3) + randomIncr) * 3 + (y + j) * 17) * 50) % 250, 76, 69), ChunkHandler.setType(1 | (1 << 3), 4));
+                            break;
+                        case 6: // FEUX
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 201, 59), ChunkHandler.setType(0, 5));
+                            break;
+                        case 7: // LAVE
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(198, 29, 0), ChunkHandler.setType(1, 8));
+                            break;
+                        case 8: // Acide
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(59, 198, 0), ChunkHandler.setType(1, 10));
+                            break;
+                        case 9: // Dynamite
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(200 + randomIncr % 40, (randomIncr % 2) * 50, (randomIncr % 2) * 50), ChunkHandler.setType(1, 13));
+                            break;
+                        case 10: // DynamitePowder
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(40 + randomIncr % 30, 25 + randomIncr % 15, 25 + randomIncr % 15), ChunkHandler.setType(1, 14));
+                            break;
+                        case 11: // ColoredPowder
+                            randomIncr++;
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, randomIncr * 8 % 150, 255), ChunkHandler.setType(1, 1));
+                            break;
+                        case 12: // NytroGlicérine
+                            randomIncr++;
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(randomIncr * 8 % 150, 255, randomIncr * 8 % 150), ChunkHandler.setType(1, 16));
+                            break;
+                        case 13: // AntiCorosif
+                            randomIncr++;
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 15));
+                            break;
+                        default:
+                            // Handle unknown paintID if necessary
+                            break;
                     }
                 }
 
             }
 
-            if(paintID == 14 && randomIncr%3 == 0) { // Humain
+            boolean isoutboundry = x == 0 || x >= width / pixelSize || y == 0 || y + 2 >= height / pixelSize;
+            if(paintID == 14 && randomIncr%3 == 0 && !isoutboundry) { // Humain
                 randomIncr++;
                 worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
                 worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
 
+            }
+
+            if(paintID == 15 && !isoutboundry) { // Lazer X
+                randomIncr++;
+                int i = 0;
+                while (true){
+                    if( worldhandler.chunkhandler.getPixelData(x,y+i)<< 31 == 0 ){
+                        worldhandler.chunkhandler.setPixel((x), (y+i), Color.rgb(0, 0, 255), ChunkHandler.setType(0, 21));
+                        i++;
+                    } else{
+                        break;
+                    }
+
+                }
+                }
+
+            if(paintID == 16 && !isoutboundry) { // Lazer Y
+                int i = 0;
+                while (true){
+                    if( worldhandler.chunkhandler.getPixelData(x,y+i)<< 31 == 0 ){
+                        worldhandler.chunkhandler.setPixel((x), (y+i), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 21));
+                        i++;
+                    } else{
+                        break;
+                    }
+
+                }
+                worldhandler.chunkhandler.setPixel((x), (y+i-1), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 12));
             }
 
 

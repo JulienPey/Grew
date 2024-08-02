@@ -72,6 +72,8 @@ public class ChunkHandler extends AppCompatActivity {
         this.threadpool = new ThreadPool();
         t = 0;
         rdm = 0;
+
+
     }
 
     public void draw(Canvas canvas) {
@@ -107,91 +109,108 @@ public class ChunkHandler extends AppCompatActivity {
         this.rdm++;
         int worldX = (i % worldSizeX);
         int worldY = (i / worldSizeX);
-        if(getType(PixelList[i]) == 1) { // Type Sable
-            update_sable(worldX,worldY);
+        int type = getType(PixelList[i]);
+        switch (type) {
+            case 1:
+                update_sable(worldX, worldY);
+                break;
+            case 2:
+                update_eau(worldX, worldY);
+                break;
+            case 6:
+                update_deletor(worldX, worldY);
+                break;
+            case 5:
+                update_feux(worldX, worldY);
+                break;
+            case 7:
+                update_braise(worldX, worldY);
+                break;
+            case 8:
+                update_lave(worldX, worldY);
+                break;
+            case 9:
+                update_braiseLave(worldX, worldY);
+                break;
+            case 10:
+                update_acide(worldX, worldY);
+                break;
+            case 11:
+                update_AcideProjection(worldX, worldY);
+                break;
+            case 12:
+                update_boum(worldX, worldY, 5);
+                break;
+            case 13:
+                update_Dynamite(worldX, worldY);
+                break;
+            case 14:
+                update_DynamitePowder(worldX, worldY);
+                break;
+            case 16:
+                update_Nytroglicerine(worldX, worldY);
+                break;
+            case 17:
+                update_boum(worldX, worldY, 25);
+                break;
+            case 18:
+                update_HumainPied(worldX, worldY);
+                break;
+            case 19:
+                update_HumainTete(worldX, worldY);
+                break;
+            case 20:
+                update_blood(worldX, worldY);
+                break;
+            case 21:
+                update_laserX(worldX, worldY);
+                break;
+            default:
+                // Handle unknown type if necessary
+                break;
+        }
+
+
+    }
+
+    private void update_laserX(int worldX, int worldY) {
+
+        int data = getPixelData(worldX, worldY);
+
+        oneUpdateAtATime(data,worldX,worldY);
+
+        if((rdm)%4== 0) {
+            setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
             return;
         }
 
-        if(getType(PixelList[i]) == 2) { // Type eau
-            update_eau(worldX,worldY);
-            return;
+        // Monter
+        if(rdm%2 == 0){
+            if ((getPixelData(worldX-1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX-1, worldY-1, worldX, worldY);
+            }
+        } else {
+            if ((getPixelData(worldX+1, worldY - 1) << 31) == 0  && (worldX+t)%2 == 0  ) {
+                swappixel(worldX+1, worldY-1, worldX, worldY);
+            }
+
         }
 
-        if(getType(PixelList[i]) == 6) { // Type Deletor
-            update_deletor(worldX,worldY);
-            return;
+        int pixelValueG = PixelList[worldX-1 + worldY * worldSizeX];
+        if (((pixelValueG & (1 << 3)) >> 3) == 1 && (rdm)%4 == 0) {
+            setPixel( (worldX-1),  (worldY), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
         }
 
-        if(getType(PixelList[i]) == 5) { // Type FEUX
-            update_feux(worldX,worldY);
-            return;
+        int pixelValueD = PixelList[worldX+1 + worldY * worldSizeX];
+        if (((pixelValueD & (1 << 3)) >> 3) == 1  ) {
+            setPixel( (worldX+1),  (worldY), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
         }
 
-        if(getType(PixelList[i]) == 7) { // Type BRAISE
-            update_braise(worldX,worldY);
-            return;
+        int pixelValueU = PixelList[worldX + (worldY-1) * worldSizeX];
+        if (((pixelValueU & (1 << 3)) >> 3) == 1 && (rdm)%4 == 0) {
+            setPixel( (worldX),  (worldY-1), Color.rgb(255, 70, 50), ChunkHandler.setType( 1 ,7) );
         }
 
-        if(getType(PixelList[i]) == 8) { // Type LAVE
-            update_lave(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 9) { // Type BraiseLAVE
-            update_braiseLave(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 10) { // Type Acide
-            update_acide(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 11) { // Type AcideProjection
-            update_AcideProjection(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 12) { // Type Boum
-            update_boum(worldX,worldY,5);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 13) { // Type Dynamite
-            update_Dynamite(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 14) { // Type DynamitePowder
-            update_DynamitePowder(worldX,worldY);
-            return;
-        }
-
-        // 15 = antiacide
-
-        if(getType(PixelList[i]) == 16) { // Type Nytroglicerine
-            update_Nytroglicerine(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 17) { // Type Boum ++
-            update_boum(worldX,worldY,25);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 18) { // Type Humain
-            update_HumainPied(worldX,worldY);
-            return;
-        }
-
-        if(getType(PixelList[i]) == 19) { // Type Humain
-            update_HumainTete(worldX,worldY);
-            return;
-        }
-        if(getType(PixelList[i]) == 20) { // Type Blood
-            update_blood(worldX,worldY);
-            return;
-        }
 
 
     }
@@ -256,10 +275,9 @@ public class ChunkHandler extends AppCompatActivity {
         int goDroite =  getBoolean(data,4);
         int goGauche =  getBoolean(data,5);
 
-        Log.e("Droite", String.valueOf(goDroite));
 
-        if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%40 == 0){
-            int rdm2 = (int) (Math.random()*50);
+        if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%20 == 0){
+            int rdm2 = rdm*4%50; //(int) (Math.random()*50);
             if(rdm2 < 20){
                 goDroite = 0;
                 goGauche = 1;
@@ -426,8 +444,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
-
-
     private void update_acide(int worldX, int worldY) {
 
         int spreadTime = 20;
@@ -493,7 +509,6 @@ public class ChunkHandler extends AppCompatActivity {
             }
         }
     }
-
 
     private void update_lave(int worldX, int worldY) {
 
@@ -594,8 +609,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
-
-
     private void update_feux(int worldX, int worldY) {
 
         rdm++;
@@ -655,7 +668,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
-
     private void update_AcideProjection(int worldX, int worldY) {
         rdm++;
         ///// PAS 2 UPDATE PAR FRAME
@@ -688,7 +700,6 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     }
-
 
     private void update_braiseLave(int worldX, int worldY) {
         rdm++;
@@ -811,6 +822,7 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     }
+
     private void update_sable(int worldX, int worldY) {
 
 
@@ -861,7 +873,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
-
     public boolean isInBound(int x,int y) {
         return y > 0 && y < worldSizeY - 1 && x > 0 && x < worldSizeX - 1;
     }
@@ -873,10 +884,10 @@ public class ChunkHandler extends AppCompatActivity {
 ;
         return PixelList[x+(y*worldSizeX)];
     }
+
     public void setPixelData(int x,int y,int data) {
          PixelList[x+(y*worldSizeX)] = data;
     }
-
 
     public void swappixel(int x1, int y1, int x2, int y2) {
         int index1 = x1 + y1 * worldSizeX;
@@ -929,8 +940,6 @@ public class ChunkHandler extends AppCompatActivity {
         return (clearedNumber | (newType << 24));
     }
 
-
-
     public void clearSimulation() {
         Chunksbitmap.eraseColor( Color.rgb(16,7,23));
         for(int i =0; i < worldSize;i++){
@@ -938,7 +947,6 @@ public class ChunkHandler extends AppCompatActivity {
             PixelList[i] = 0;
         }
     }
-
 
     private boolean IsMovable(int typeElement, int data) {
         int type = getType(data);
@@ -958,7 +966,7 @@ public class ChunkHandler extends AppCompatActivity {
             case 12:
                 return true;//(type != 12);
             case 13:
-                return (type == 5 || type == 7 || type == 8 || type == 9|| type == 12);
+                return (type == 5 || type == 7 || type == 8 || type == 9|| type == 12 || type == 21);
             case 14:
                 return data << 31 == 0 || type == 2 ||type == 10;
             case 15:
@@ -969,7 +977,7 @@ public class ChunkHandler extends AppCompatActivity {
                 return data << 31 == 0 ||type == 2 ||type == 10 || type == 16;
 
             case 18:
-                return data << 31 == 0 || type == 2 ||type == 10  ||type == 20;
+                return data << 31 == 0 || type == 2 ||type == 10  ||type == 20 || type == 16;
             default:
                 return false;
         }
