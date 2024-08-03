@@ -4,23 +4,11 @@ import static java.lang.Thread.sleep;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.concurrent.Future;
 
 public class Game  {
     private static final String LOGTAG = "Game";
@@ -170,7 +158,7 @@ public class Game  {
         gameLoop.updateCount++;
 
     }
-    public void Touch() {
+    public void Touch(MotionEvent motionEvent) {
 
         if(!isdown){
             return;
@@ -194,7 +182,7 @@ public class Game  {
 
             for(int i =0;i < brushSize;i++){
                 for(int j =0;j < brushSize;j++) {
-                    if(i+x == 0 || i+x >= width/pixelSize || y+j == 0 || y+j+1 >= height/pixelSize){
+                    if(i+x == 0 || i+x+1 >= width/pixelSize || y+j == 0 || y+j+1 >= height/pixelSize){
                         continue;
                     }
                     switch (paintID) {
@@ -244,6 +232,19 @@ public class Game  {
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 15));
                             break;
+                        case 17: // Rats
+                            if(randomIncr%3 == 0){
+                                randomIncr++;
+                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(150 + randomIncr*7%30, 150+ randomIncr*7%30, 150+ randomIncr*7%30), ChunkHandler.setType(1, 22));
+                            }
+                            break;
+                        case 18: // grenade
+                            if(randomIncr%2 == 0) {
+                                randomIncr++;
+                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 23));
+                            }
+                            break;
+
                         default:
                             // Handle unknown paintID if necessary
                             break;
@@ -252,7 +253,7 @@ public class Game  {
 
             }
 
-            boolean isoutboundry = x == 0 || x >= width / pixelSize || y == 0 || y + 2 >= height / pixelSize;
+            boolean isoutboundry = x == 0 || x +1 >= width / pixelSize || y == 0 || y + 2 >= height / pixelSize;
             if(paintID == 14 && randomIncr%3 == 0 && !isoutboundry) { // Humain
                 randomIncr++;
                 worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
@@ -287,6 +288,8 @@ public class Game  {
                 }
                 worldhandler.chunkhandler.setPixel((x), (y+i-1), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 12));
             }
+
+
 
 
             // Vérifie si nous avons atteint le point final
@@ -364,7 +367,7 @@ public class Game  {
 
         if(brushX < 0){brushX = 0;}
         if(brushY < 0){brushY = 0;}
-        Touch();
+        Touch(motionEvent);
     }
 
     private void clearSimulation() {

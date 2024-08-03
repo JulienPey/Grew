@@ -165,6 +165,12 @@ public class ChunkHandler extends AppCompatActivity {
             case 21:
                 update_laserX(worldX, worldY);
                 break;
+            case 22:
+                update_rats(worldX, worldY);
+                break;
+            case 23:
+                update_grenade(worldX, worldY);
+                break;
             default:
                 // Handle unknown type if necessary
                 break;
@@ -173,13 +179,108 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
+    private void update_grenade(int worldX, int worldY) {
+
+
+        boolean boum = false;
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+        for(int i = 0;i < spreadTime; i++) {
+            if (IsMovable(1,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
+                yswap += 1;
+            }  else if (IsMovable(1,(getPixelData(worldX - 1+xswap, worldY + 1+yswap) ))) {
+                yswap += 1;
+                xswap -= 1;
+            }else if (IsMovable(1,(getPixelData(worldX + 1+xswap, worldY + 1+yswap)))) {
+                yswap += 1;
+                xswap += 1;
+            }else{
+                boum = true;
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+    if(boum){
+        setPixel(worldX+xswap, worldY+yswap, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  12));
+
+    }
+
+
+    }
+
+    private void update_rats(int worldX, int worldY) {
+        int data = getPixelData(worldX,worldY);
+        if(!oneUpdateAtATime(data,worldX,worldY)){
+            return;
+        }
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+
+
+        int goDroite =  getBoolean(data,4);
+        int goGauche =  getBoolean(data,5);
+
+
+        if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%20 == 0){
+            int rdm2 = rdm*4%50; //(int) (Math.random()*50);
+            if(rdm2 < 10){
+                goDroite = 0;
+                goGauche = 1;
+            } else if (rdm2 > 30){
+                goDroite = 1;
+                goGauche = 0;
+            } else {
+                goDroite = 1;
+                goGauche = 1;
+            }
+
+            data = setBoolean(data,goDroite,4);
+            data = setBoolean(data,goGauche,5);
+            setPixelData(worldX,worldY,data);
+        }
+
+        for(int i = 0;i < spreadTime; i++) {
+            if (IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
+                yswap += 1;
+            } else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap) )) ) {
+                xswap += 1;
+                break;
+            } else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap) )) ) {
+                xswap -= 1;
+                break;
+            }else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-1) )) ) {
+                xswap -= 1;
+                yswap -= 1;
+                break;
+            }else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-1) )) ) {
+                xswap += 1;
+                yswap -= 1;
+                break;
+            }
+            else{
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+    }
+
     private void update_laserX(int worldX, int worldY) {
 
         int data = getPixelData(worldX, worldY);
 
         oneUpdateAtATime(data,worldX,worldY);
-
-        if((rdm)%4== 0) {
+        rdm++;
+        if((rdm)%3== 0) {
             setPixel(worldX, worldY, Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
             return;
         }
@@ -251,7 +352,6 @@ public class ChunkHandler extends AppCompatActivity {
             setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
             return;
         }
-
     }
 
     private void update_HumainPied(int worldX, int worldY) {
@@ -278,7 +378,7 @@ public class ChunkHandler extends AppCompatActivity {
 
         if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%20 == 0){
             int rdm2 = rdm*4%50; //(int) (Math.random()*50);
-            if(rdm2 < 20){
+            if(rdm2 < 10){
                 goDroite = 0;
                 goGauche = 1;
             } else if (rdm2 > 30){
@@ -504,7 +604,7 @@ public class ChunkHandler extends AppCompatActivity {
         }
 
         if(hasdestroyed){
-            if(rdm%2 == 0){
+            if(rdm%2  == 0){
                 setPixel(worldX+xswap, worldY +yswap, Color.rgb(16,7,23), ChunkHandler.setType(0,  0));
             }
         }
@@ -844,18 +944,6 @@ public class ChunkHandler extends AppCompatActivity {
         }
 
         if(xswap != 0 || yswap != 0){
-
-            int particleSpread = 4;
-            if(getType(PixelList[(worldX+xswap)+(worldY + yswap)*worldSizeX]) == 2 ){
-                for(int i = -particleSpread; i<particleSpread;i++){
-                    if((worldX+xswap+i) <= 0 || (worldX+xswap+i) >= worldSizeX -1){break;}
-
-                    if(getType(PixelList[(worldX+xswap+i)+(worldY + yswap)*worldSizeX]) == 0 ) {
-                        swappixel(worldX+xswap, worldY+yswap, worldX+xswap+i, worldY+yswap);
-                    }
-                    }
-                }
-
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
             }
 
