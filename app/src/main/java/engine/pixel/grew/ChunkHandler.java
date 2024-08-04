@@ -171,11 +171,73 @@ public class ChunkHandler extends AppCompatActivity {
             case 23:
                 update_grenade(worldX, worldY);
                 break;
+            case 24:
+                update_grenouile(worldX, worldY);
+                break;
             default:
                 // Handle unknown type if necessary
                 break;
         }
 
+
+    }
+
+    private void update_grenouile(int worldX, int worldY) {
+
+        int data = getPixelData(worldX,worldY);
+        if(!oneUpdateAtATime(data,worldX,worldY)){
+            return;
+        }
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+
+
+        int goDroite =  getBoolean(data,4);
+        int goGauche =  getBoolean(data,5);
+
+
+        if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%20 == 0){
+            int rdm2 = rdm*4%50; //(int) (Math.random()*50);
+            if(rdm2 < 10){
+                goDroite = 0;
+                goGauche = 1;
+            } else if (rdm2 > 30){
+                goDroite = 1;
+                goGauche = 0;
+            } else {
+                goDroite = 1;
+                goGauche = 1;
+            }
+
+            data = setBoolean(data,goDroite,4);
+            data = setBoolean(data,goGauche,5);
+            setPixelData(worldX,worldY,data);
+        }
+
+        for(int i = 0;i < spreadTime; i++) {
+            if (IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
+                yswap += 1;
+                if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 2 + yswap) ))){
+                    break;
+                }
+            } else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-1) )) ) {
+                xswap -= 1;
+                yswap -= 1;
+                break;
+            }else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-1) )) ) {
+                xswap += 1;
+                yswap -= 1;
+                break;
+            }
+            else{
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
 
     }
 
@@ -1066,6 +1128,9 @@ public class ChunkHandler extends AppCompatActivity {
 
             case 18:
                 return data << 31 == 0 || type == 2 ||type == 10  ||type == 20 || type == 16;
+
+            case 24:
+                return data << 31 == 0 && type != 24;
             default:
                 return false;
         }

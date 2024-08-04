@@ -28,6 +28,9 @@ public class Game  {
     private int brushY;
     private boolean isdown;
     private boolean isunder;
+    private boolean isFirstClick = false;
+
+    boolean pauseSimulation = false;
 
     public static int randomIncr = 0;
     private int brushSize = 2;
@@ -151,9 +154,15 @@ public class Game  {
      */
 
     public void update() {
-        t += 1;
 
+
+        t += 1;
         randomIncr++;
+
+        if(pauseSimulation){
+            return;
+        }
+
         worldhandler.update();
         gameLoop.updateCount++;
 
@@ -226,24 +235,31 @@ public class Game  {
                             break;
                         case 12: // NytroGlicérine
                             randomIncr++;
-                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(randomIncr * 8 % 150, 255, randomIncr * 8 % 150), ChunkHandler.setType(1, 16));
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(209, 192, 88), ChunkHandler.setType(1, 16));
                             break;
                         case 13: // AntiCorosif
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 15));
                             break;
                         case 17: // Rats
-                            if(randomIncr%3 == 0){
+                            if(randomIncr%3 == 0 || isFirstClick){
                                 randomIncr++;
-                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(150 + randomIncr*7%30, 150+ randomIncr*7%30, 150+ randomIncr*7%30), ChunkHandler.setType(1, 22));
+                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(150 + randomIncr*7%30, 150+ randomIncr*7%30, 150+ randomIncr*7%30), ChunkHandler.setType(1 | (1 << 3), 22));
                             }
                             break;
                         case 18: // grenade
-                            if(randomIncr%2 == 0) {
+                            if(randomIncr%2 == 0 || isFirstClick) {
                                 randomIncr++;
-                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 23));
+                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(87, 98, 56), ChunkHandler.setType(1, 23));
                             }
                             break;
+                        case 19: // Grennouille
+                            if(randomIncr%3 == 0 || isFirstClick) {
+                                randomIncr++;
+                                worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(0, 255, 0), ChunkHandler.setType(1 | (1 << 3), 24));
+                            }
+                            break;
+
 
                         default:
                             // Handle unknown paintID if necessary
@@ -254,7 +270,7 @@ public class Game  {
             }
 
             boolean isoutboundry = x == 0 || x +1 >= width / pixelSize || y == 0 || y + 2 >= height / pixelSize;
-            if(paintID == 14 && randomIncr%3 == 0 && !isoutboundry) { // Humain
+            if(paintID == 14 && (randomIncr%3 == 0 || isFirstClick) && !isoutboundry) { // Humain
                 randomIncr++;
                 worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
                 worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
@@ -307,7 +323,7 @@ public class Game  {
         }
 
 
-
+        isFirstClick = false;
     }
 
     public void TouchEvent(MotionEvent motionEvent) {
@@ -328,6 +344,12 @@ public class Game  {
                 int xpos = (int)(motionEvent.getX() + decalagePaintBoxes)/boxWidth;
                 int ypos = motionEvent.getY()>= height+boxWidth ? 1 : 0;
                 paintID = xpos*2 + ypos;
+                if(paintID == 20){
+                    clearSimulation();
+                }
+                if(paintID == 21){
+                    pauseSimulation = !pauseSimulation;
+                }
             }
             this.brushX = (int) motionEvent.getX() / pixelSize;
             this.isdown = false;
@@ -350,6 +372,8 @@ public class Game  {
             this.oldBrushX = this.brushX;
             this.oldBrushY = this.brushY;
             this.isdown = true;
+            isFirstClick = true;
+
 
             return;
         }
