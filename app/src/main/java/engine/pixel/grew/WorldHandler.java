@@ -28,7 +28,9 @@ public class WorldHandler {
     }
 
     public void clearSimulation() {
+        for(int i = 0; i < 2; i ++){
         chunkhandler.clearSimulation();
         particlehandler.clearSimulation();
+        }
     }
 }

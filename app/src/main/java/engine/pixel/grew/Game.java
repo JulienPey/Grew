@@ -185,15 +185,17 @@ public class Game  {
 
         int x = oldBrushX;
         int y = oldBrushY;
-
+        boolean onatTime = false;
         while (true) {
             // Dessine le pixel
 
             for(int i =0;i < brushSize;i++){
                 for(int j =0;j < brushSize;j++) {
-                    if(i+x == 0 || i+x+1 >= width/pixelSize || y+j == 0 || y+j+1 >= height/pixelSize){
+
+                    if(onatTime || i+x == 0 || i+x+1 >= width/pixelSize || y+j == 0 || y+j+2 >= height/pixelSize){
                         continue;
                     }
+
                     switch (paintID) {
                         case 0: // AIR
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
@@ -241,6 +243,41 @@ public class Game  {
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 15));
                             break;
+                        case 14: // humain
+                           onatTime = true;
+                            if((randomIncr%3 == 0 || isFirstClick)) {
+                                randomIncr++;
+                                worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
+                            }
+                            break;
+                        case 15: // RayonX
+                            onatTime = true;
+                                randomIncr++;
+                                int p = 0;
+                                while (true){
+                                    if( worldhandler.chunkhandler.getPixelData(x,y+p)<< 31 == 0 ){
+                                        worldhandler.chunkhandler.setPixel((x), (y+p), Color.rgb(0, 0, 255), ChunkHandler.setType(0, 21));
+                                        p++;
+                                    } else{
+                                        break;
+                                    }
+                                }
+                            break;
+                        case 16: // RayonX
+                            onatTime = true;
+                            randomIncr++;
+                            int m = 0;
+                            while (true){
+                                if( worldhandler.chunkhandler.getPixelData(x,y+m)<< 31 == 0 ){
+                                    worldhandler.chunkhandler.setPixel((x), (y+m), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 21));
+                                    m++;
+                                } else{
+                                    break;
+                                }
+                            }
+                            worldhandler.chunkhandler.setPixel((x), (y+m-1), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 12));
+                            break;
                         case 17: // Rats
                             if(randomIncr%3 == 0 || isFirstClick){
                                 randomIncr++;
@@ -260,7 +297,6 @@ public class Game  {
                             }
                             break;
 
-
                         default:
                             // Handle unknown paintID if necessary
                             break;
@@ -269,41 +305,7 @@ public class Game  {
 
             }
 
-            boolean isoutboundry = x == 0 || x +1 >= width / pixelSize || y == 0 || y + 2 >= height / pixelSize;
-            if(paintID == 14 && (randomIncr%3 == 0 || isFirstClick) && !isoutboundry) { // Humain
-                randomIncr++;
-                worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
-                worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
 
-            }
-
-            if(paintID == 15 && !isoutboundry) { // Lazer X
-                randomIncr++;
-                int i = 0;
-                while (true){
-                    if( worldhandler.chunkhandler.getPixelData(x,y+i)<< 31 == 0 ){
-                        worldhandler.chunkhandler.setPixel((x), (y+i), Color.rgb(0, 0, 255), ChunkHandler.setType(0, 21));
-                        i++;
-                    } else{
-                        break;
-                    }
-
-                }
-                }
-
-            if(paintID == 16 && !isoutboundry) { // Lazer Y
-                int i = 0;
-                while (true){
-                    if( worldhandler.chunkhandler.getPixelData(x,y+i)<< 31 == 0 ){
-                        worldhandler.chunkhandler.setPixel((x), (y+i), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 21));
-                        i++;
-                    } else{
-                        break;
-                    }
-
-                }
-                worldhandler.chunkhandler.setPixel((x), (y+i-1), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 12));
-            }
 
 
 
@@ -343,13 +345,35 @@ public class Game  {
             if(motionEvent.getX() < boxWidth*paintIDs){
                 int xpos = (int)(motionEvent.getX() + decalagePaintBoxes)/boxWidth;
                 int ypos = motionEvent.getY()>= height+boxWidth ? 1 : 0;
-                paintID = xpos*2 + ypos;
-                if(paintID == 20){
-                    clearSimulation();
+
+                int temppaintid = xpos*2 + ypos;
+
+                switch(temppaintid){
+                    case 20:
+                        clearSimulation();
+                        break;
+                    case 21:
+                        pauseSimulation = !pauseSimulation;
+                        break;
+                    case 22:
+                        brushSize++;
+                        if(brushSize >= 8){
+                            brushSize = 8;
+                        }
+                        break;
+                    case 23:
+                        brushSize--;
+                        if(brushSize<=0){
+                            brushSize = 1;
+                        }
+                        break;
+                    default:
+                        paintID = xpos*2 + ypos;
+                        break;
+
+
                 }
-                if(paintID == 21){
-                    pauseSimulation = !pauseSimulation;
-                }
+
             }
             this.brushX = (int) motionEvent.getX() / pixelSize;
             this.isdown = false;
@@ -395,7 +419,8 @@ public class Game  {
     }
 
     private void clearSimulation() {
+        pauseSimulation = true;
             worldhandler.clearSimulation();
-
+        pauseSimulation = false;
     }
 }
