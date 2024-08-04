@@ -2,6 +2,7 @@ package engine.pixel.grew;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
          */
-
+        getWindow().setNavigationBarColor(Color.BLACK);
 
         gameLoop = new GameLoop(MainActivity.this);//Initialize the gameLoop instance
         setContentView(gameLoop);//setContentView to the game surfaceview

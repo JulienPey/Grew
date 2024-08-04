@@ -4,6 +4,8 @@ import static java.lang.Thread.sleep;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -17,6 +19,7 @@ public class Game  {
     public final int height;
     private final WorldHandler worldhandler;
     private final ThreadPool threadpool;
+    private final Bitmap bitmapIcones;
     private int oldBrushY;
     private int oldBrushX;
     private int paintID;
@@ -38,7 +41,7 @@ public class Game  {
     private int paintIDs = 24;
 
     private int decalagePaintBoxes = 0;
-    private int boxWidth = 130;
+    private int boxWidth = 140;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -59,6 +62,8 @@ public class Game  {
 
         this.oldBrushX = 0;
         this.oldBrushY = 0;
+       // BitmapUtils.preloadBitmaps(this.context, paintIDs);
+        bitmapIcones = BitmapFactory.decodeResource(context.getResources(), R.drawable.icones);
 
         /*
         Future<?> task1 = threadpool.addThread(() -> {
@@ -103,17 +108,21 @@ public class Game  {
 
 
     public void Console(Canvas canvas) {
+
         Paint paint = new Paint();
         paint.setTextSize(20);
         paint.setColor(Color.WHITE);
         canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
+       // canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
 
-        canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
+        Paint paint1 = new Paint();
+        paint1.setColor(Color.BLACK);
+        paint1.setStyle(Paint.Style.STROKE);
+        int pixelbordurelength = 3;
+        paint1.setStrokeWidth(pixelbordurelength);
+
 
         Paint paint2 = new Paint();
-
-
-
         for(int i = 0; i < paintIDs;i++){
 
             randomIncr++;
@@ -122,36 +131,68 @@ public class Game  {
             if(i%2 == 1){
                 enbas = boxWidth;
             }
-            paint2.setColor(Color.rgb(i*50+50+ enbas,i*20,i*70+enbas));
+            paint2.setColor(getcolor(i));
             canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint2);
+            canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint1);
+
+            //canvas.drawBitmap(BitmapUtils.getBitmapForIndex(i), (i/2)*boxWidth-decalagePaintBoxes,this.height+enbas, null);
 
 
         }
+        canvas.drawBitmap(bitmapIcones, -decalagePaintBoxes,this.height, null);
+
 //canvas.drawBitmap(d, 0,0, null);
-        //debugchunk(canvas);
+        //debugchunk(canvas);Color.rgb(i*50+50+ enbas,i*20,i*70+enbas)
 
 
 
     }
-    /*
-    private void debugchunk(Canvas canvas) {
-        Paint paint2 = new Paint();
-        paint2.setColor(Color.RED); // Couleur du contour
-        paint2.setStrokeWidth(1); // Épaisseur de la ligne du contour
-        paint2.setStyle(Paint.Style.STROKE);
 
 
-        for(int i = 0; i < worldhandler.chunkhandler.AmountChunkX * worldhandler.chunkhandler.AmountChunkY;i++) {
-            if (worldhandler.chunkhandler.ChunkList[i].willbeActive) {
-                int left = ((i % worldhandler.chunkhandler.AmountChunkX) * ChunkHandler.ChunkSize) * pixelSize;
-                int top = ((i / worldhandler.chunkhandler.AmountChunkX) * ChunkHandler.ChunkSize) * pixelSize;
-                canvas.drawRect(left, top, left + ChunkHandler.ChunkSize * pixelSize, top +  ChunkHandler.ChunkSize * pixelSize, paint2);
-            }
+    public static Bitmap getBitmapForIndex(Context context, int i) {
+        int resId = context.getResources().getIdentifier("icone_" + i, "drawable", context.getPackageName());
+
+        if (resId == 0) {
+            // Ressource introuvable, retour du bitmap par défaut
+            resId = R.drawable.defaut; // Remplacez "defaut" par le nom de votre image par défaut
         }
 
+        return BitmapFactory.decodeResource(context.getResources(), resId);
     }
 
-     */
+    private int getcolor(int i) {
+
+        switch (i){
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                return  Color.rgb(10,120,123);
+
+            case 4:
+                return  Color.rgb(170,190,193);
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+                return  Color.rgb(250,250,250);
+            case 13:
+            case 14:
+            case 15:
+                return  Color.rgb(50,150,50);
+            case 23:
+                return  Color.rgb(50,50,150);
+            default:
+                return  Color.rgb(250,50,50);
+        }
+
+
+    }
+
 
     public void update() {
 
@@ -197,53 +238,53 @@ public class Game  {
                     }
 
                     switch (paintID) {
-                        case 0: // AIR
+                        case 4: // AIR
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(16, 7, 23), ChunkHandler.setType(0, 0));
                             break;
-                        case 1: // PIERRE
+                        case 5: // PIERRE
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb((t * 15) % 50, 100, 100), ChunkHandler.setType(1, 3));
                             break;
-                        case 2: // SABLE
+                        case 8: // SABLE
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255 - (t * i * j) % 30, 215 - (t * i * j) % 30, 168 - (t * i * j) % 30), ChunkHandler.setType(1, 1));
                             break;
-                        case 3: // EAU
+                        case 10: // EAU
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(5, 186, 243), ChunkHandler.setType(3, 2));
                             break;
-                        case 4: // DELETOR
+                        case 23: // DELETOR
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb((t) % 10 + 20, 0, (t) % 10 + 20), ChunkHandler.setType(1, 6));
                             break;
-                        case 5: // BOIS
+                        case 6: // BOIS
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb((int) ((Math.sin(((x + i) / 3) + randomIncr) * 3 + (y + j) * 17) * 50) % 250, 76, 69), ChunkHandler.setType(1 | (1 << 3), 4));
                             break;
-                        case 6: // FEUX
+                        case 16: // FEUX
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 201, 59), ChunkHandler.setType(0, 5));
                             break;
-                        case 7: // LAVE
+                        case 11: // LAVE
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(198, 29, 0), ChunkHandler.setType(1, 8));
                             break;
-                        case 8: // Acide
+                        case 12: // Acide
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(59, 198, 0), ChunkHandler.setType(1, 10));
                             break;
-                        case 9: // Dynamite
+                        case 18: // Dynamite
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(200 + randomIncr % 40, (randomIncr % 2) * 50, (randomIncr % 2) * 50), ChunkHandler.setType(1, 13));
                             break;
-                        case 10: // DynamitePowder
+                        case 17: // DynamitePowder
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(40 + randomIncr % 30, 25 + randomIncr % 15, 25 + randomIncr % 15), ChunkHandler.setType(1, 14));
                             break;
-                        case 11: // ColoredPowder
+                        case 9: // ColoredPowder
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, randomIncr * 8 % 150, 255), ChunkHandler.setType(1, 1));
                             break;
-                        case 12: // NytroGlicérine
+                        case 19: // NytroGlicérine
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(209, 192, 88), ChunkHandler.setType(1, 16));
                             break;
-                        case 13: // AntiCorosif
+                        case 7: // AntiCorosif
                             randomIncr++;
                             worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, 255, 255), ChunkHandler.setType(1, 15));
                             break;
-                        case 14: // humain
+                        case 15: // humain
                            onatTime = true;
                             if((randomIncr%3 == 0 || isFirstClick)) {
                                 randomIncr++;
@@ -251,7 +292,7 @@ public class Game  {
                                 worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
                             }
                             break;
-                        case 15: // RayonX
+                        case 21: // RayonX
                             onatTime = true;
                                 randomIncr++;
                                 int p = 0;
@@ -264,7 +305,7 @@ public class Game  {
                                     }
                                 }
                             break;
-                        case 16: // RayonX
+                        case 22: // RayonX
                             onatTime = true;
                             randomIncr++;
                             int m = 0;
@@ -278,19 +319,19 @@ public class Game  {
                             }
                             worldhandler.chunkhandler.setPixel((x), (y+m-1), Color.rgb(255, 0, 0), ChunkHandler.setType(0, 12));
                             break;
-                        case 17: // Rats
+                        case 13: // Rats
                             if(randomIncr%3 == 0 || isFirstClick){
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(150 + randomIncr*7%30, 150+ randomIncr*7%30, 150+ randomIncr*7%30), ChunkHandler.setType(1 | (1 << 3), 22));
                             }
                             break;
-                        case 18: // grenade
+                        case 20: // grenade
                             if(randomIncr%2 == 0 || isFirstClick) {
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(87, 98, 56), ChunkHandler.setType(1, 23));
                             }
                             break;
-                        case 19: // Grennouille
+                        case 14: // Grennouille
                             if(randomIncr%3 == 0 || isFirstClick) {
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(0, 255, 0), ChunkHandler.setType(1 | (1 << 3), 24));
@@ -349,19 +390,19 @@ public class Game  {
                 int temppaintid = xpos*2 + ypos;
 
                 switch(temppaintid){
-                    case 20:
+                    case 0:
                         clearSimulation();
                         break;
-                    case 21:
+                    case 1:
                         pauseSimulation = !pauseSimulation;
                         break;
-                    case 22:
+                    case 2:
                         brushSize++;
                         if(brushSize >= 8){
                             brushSize = 8;
                         }
                         break;
-                    case 23:
+                    case 3:
                         brushSize--;
                         if(brushSize<=0){
                             brushSize = 1;
@@ -379,7 +420,7 @@ public class Game  {
             this.isdown = false;
             return;
             } else{
-                decalagePaintBoxes += (brushX -  (int) motionEvent.getX() / pixelSize)*5;
+                decalagePaintBoxes += (brushX -  (int) motionEvent.getX() / pixelSize)*6;
                 if(decalagePaintBoxes < 0){
                     decalagePaintBoxes = 0;
                 }
