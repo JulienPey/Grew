@@ -154,10 +154,10 @@ public class ChunkHandler extends AppCompatActivity {
                 update_boum(worldX, worldY, 25);
                 break;
             case 18:
-                update_HumainPied(worldX, worldY);
+                update_HumainTeteMid(worldX,worldY);//update_HumainPied(worldX, worldY);
                 break;
             case 19:
-                update_HumainTete(worldX, worldY);
+                update_HumainBrain(worldX,worldY);//update_HumainTete(worldX, worldY);
                 break;
             case 20:
                 update_blood(worldX, worldY);
@@ -174,6 +174,12 @@ public class ChunkHandler extends AppCompatActivity {
             case 24:
                 update_grenouile(worldX, worldY);
                 break;
+            case 25:
+                update_HumainPiedG(worldX, worldY);
+                break;
+            case 26:
+                update_HumainTeteUp(worldX, worldY);
+                break;
             default:
                 // Handle unknown type if necessary
                 break;
@@ -181,6 +187,177 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     }
+
+    private void update_HumainTeteUp(int worldX, int worldY) { // 26
+
+        if(getType(getPixelData(worldX, worldY + 1)) != 18){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));//20
+            return;
+        }
+
+
+
+    }
+
+    private void update_HumainTeteMid(int worldX, int worldY) { // 18
+        int up = getType(getPixelData(worldX, worldY - 1));
+        if(up != 18 && up != 26){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+
+        int bas = getType(getPixelData(worldX, worldY + 1));
+        if(bas != 18 && bas != 25 && bas != 19){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+
+
+
+    }
+
+
+    private void update_HumainPiedG(int worldX, int worldY) { // 25
+
+        if(getType(getPixelData(worldX+1, worldY)) != 19){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+
+        if(getType(getPixelData(worldX, worldY - 1)) != 18){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+    }
+
+
+
+    private void update_HumainBrain(int worldX, int worldY) { // 19
+
+        if(getType(getPixelData(worldX-1, worldY)) != 25){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+
+        if(getType(getPixelData(worldX, worldY - 1)) != 18){
+            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
+            return;
+        }
+
+        int data = getPixelData(worldX,worldY);
+        if(!oneUpdateAtATime(data,worldX,worldY)){
+            return;
+        }
+
+
+        int goDroite =  getBoolean2(data,4);
+        int goGauche =  getBoolean2(data,5);
+        int goDroiteN;
+        int goGaucheN;
+        if(!IsMovable(18,(getPixelData(worldX, worldY + 1) ))&& !IsMovable(18,(getPixelData(worldX-1, worldY + 1) )) && rdm%20 == 0){
+            int rdm2 = rdm*4%50;
+            if(rdm2 < 20){
+                goDroiteN = 1;
+                goGaucheN = 0;
+            } else if (rdm2 > 30){
+                goDroiteN = 0;
+                goGaucheN = 1;
+            } else {
+                goDroiteN = 0;
+                goGaucheN = 0;
+            }
+
+            boolean haschanged = false;
+            if(goDroite != goDroiteN){
+                goDroite = goDroiteN;
+                data = setBoolean(data,goDroiteN,4);
+                haschanged = true;
+            }
+
+            if(goGauche != goGaucheN){
+                goGauche = goGaucheN;
+                data = setBoolean(data,goGaucheN,5);
+                haschanged = true;
+            }
+
+            if(haschanged){
+                setPixelData(worldX,worldY,data);
+            }
+        }
+
+        int spreadTime = 5;
+        int xswap = 0;
+        int yswap = 0;
+
+        for(int i = 0;i < spreadTime; i++) {
+            if (IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + 1 + yswap) )) ) {
+                yswap += 1;
+            } else if(goDroite == 1 && isEmptyRow(worldX+xswap+1,worldY+yswap)){
+                xswap +=1;
+                break;
+            } else if(goGauche == 1 && isEmptyRow(worldX+xswap-2,worldY+yswap)){
+                xswap -=1;
+                break;
+            } else if(goGauche == 1 && isEmptyRow(worldX+xswap-2,worldY+yswap-7)){
+                xswap -=1;
+                yswap -= 7;
+                break;
+            }else if(goDroite == 1 && isEmptyRow(worldX+xswap+1,worldY+yswap-7)){
+                xswap +=1;
+                yswap -= 7;
+                break;
+            }
+            else {
+                break;
+            }
+        }
+
+        if(xswap != 0 || yswap != 0){
+            Log.e("ALED", String.valueOf(xswap));
+            moveHumain(worldX+xswap, worldY+yswap, worldX, worldY);
+        }
+
+
+    }
+
+
+    private boolean isEmptyRow(int worldX, int worldY){
+        for(int i =0; i < 6;i++){
+            if((!IsMovable(18,(getPixelData(worldX, worldY - i) )))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void moveHumain(int worldX2, int worldY2,int worldX,int worldY){
+        if(worldX2 >= worldX && worldY2 >= worldY){
+            for(int i =0; i < 7; i++){
+                swappixel(worldX, worldY-i, worldX2, worldY2-i);
+                swappixel(worldX-1, worldY-i, worldX2-1, worldY2-i);
+            }
+        } else if (worldX2 <= worldX && worldY2 >= worldY){
+            for(int i =0; i < 7; i++){
+                swappixel(worldX-1, worldY-i, worldX2-1, worldY2-i);
+                swappixel(worldX, worldY-i, worldX2, worldY2-i);
+            }
+
+        }else if (worldX2 <= worldX){
+            for(int i =7; i >= 0; i--){
+                swappixel(worldX-1, worldY-i, worldX2-1, worldY2-i);
+                swappixel(worldX, worldY-i, worldX2, worldY2-i);
+            }
+        } else {
+            for(int i =7; i >= 0; i--){
+                swappixel(worldX, worldY-i, worldX2, worldY2-i);
+                swappixel(worldX-1, worldY-i, worldX2-1, worldY2-i);
+            }
+
+        }
+
+    }
+
+
 
     private void update_grenouile(int worldX, int worldY) {
 
@@ -409,6 +586,8 @@ public class ChunkHandler extends AppCompatActivity {
 
     }
 
+
+
     private void update_HumainTete(int worldX, int worldY) {
         if(getType(getPixelData(worldX,worldY +1 )) != 18){
             setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
@@ -417,8 +596,6 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     private void update_HumainPied(int worldX, int worldY) {
-
-
 
         if(getType(getPixelData(worldX,worldY -1)) != 19){
             setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
@@ -484,6 +661,7 @@ public class ChunkHandler extends AppCompatActivity {
 
             swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
             swappixel(worldX+xswap, worldY+yswap-1, worldX, worldY-1);
+
         }
 
 
@@ -1072,6 +1250,13 @@ public class ChunkHandler extends AppCompatActivity {
 
     public int getBoolean(int nbr,int id) {
         return nbr<<(31 -id) >> 31;
+    }
+
+    public int getBoolean2(int nbr,int id) {
+       if(nbr<<(31 -id) >> 31 == 0){
+           return 0;
+       }
+       return 1;
     }
 
     public int setBoolean(int originalNumber, int newType,int id) {

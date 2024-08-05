@@ -288,8 +288,32 @@ public class Game  {
                            onatTime = true;
                             if((randomIncr%3 == 0 || isFirstClick)) {
                                 randomIncr++;
+                                /*
                                 worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
                                 worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
+                                */
+
+                                worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(136, 0, 21), ChunkHandler.setType( 1 | (1 << 3) ,26) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y, Color.rgb(136, 0, 21), ChunkHandler.setType( 1 | (1 << 3) ,26) );
+
+                                worldhandler.chunkhandler.setPixel( x,  y+1, Color.rgb(136, 0, 21), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+1, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+
+                                worldhandler.chunkhandler.setPixel( x,  y+2, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+2, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+
+                                worldhandler.chunkhandler.setPixel( x,  y+3, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+3, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+
+                                worldhandler.chunkhandler.setPixel( x,  y+4, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+4, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+
+                                worldhandler.chunkhandler.setPixel( x,  y+5, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+5, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+
+                                worldhandler.chunkhandler.setPixel( x,  y+6, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,25) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+6, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,19) );
+
                             }
                             break;
                         case 21: // RayonX
