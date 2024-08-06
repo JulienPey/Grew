@@ -33,6 +33,10 @@ public class Game  {
     private boolean isunder;
     private boolean isFirstClick = false;
 
+    private boolean hasclickedOnThisFrame = false;
+    private int hasclickedOnPaintID;
+
+
     boolean pauseSimulation = false;
 
     public static int randomIncr = 0;
@@ -51,7 +55,7 @@ public class Game  {
         this.width = (int) (Resources.getSystem().getDisplayMetrics().widthPixels);
         this.height =(int) (Resources.getSystem().getDisplayMetrics().heightPixels)-2*boxWidth;
 
-        this.paintID = 2;
+        this.paintID = 5;
 
         matrix.postScale(pixelSize, pixelSize);
 
@@ -128,10 +132,17 @@ public class Game  {
             randomIncr++;
 
             int enbas = 0;
+
             if(i%2 == 1){
                 enbas = boxWidth;
             }
-            paint2.setColor(getcolor(i));
+
+            if((hasclickedOnThisFrame && i == hasclickedOnPaintID) || i == paintID){
+                paint2.setColor(Color.rgb(230,230,230));
+            } else {
+                paint2.setColor(getcolor(i));
+            }
+
             canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint2);
             canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint1);
 
@@ -139,6 +150,7 @@ public class Game  {
 
 
         }
+        hasclickedOnThisFrame = false;
         canvas.drawBitmap(bitmapIcones, -decalagePaintBoxes,this.height, null);
 
 //canvas.drawBitmap(d, 0,0, null);
@@ -170,7 +182,7 @@ public class Game  {
                 return  Color.rgb(10,120,123);
 
             case 4:
-                return  Color.rgb(170,190,193);
+                return  Color.rgb(100,120,123);
             case 5:
             case 6:
             case 7:
@@ -179,7 +191,7 @@ public class Game  {
             case 10:
             case 11:
             case 12:
-                return  Color.rgb(250,250,250);
+                return  Color.rgb(170,190,193);
             case 13:
             case 14:
             case 15:
@@ -415,18 +427,26 @@ public class Game  {
 
                 switch(temppaintid){
                     case 0:
+                        hasclickedOnThisFrame = true;
+                        hasclickedOnPaintID = 0;
                         clearSimulation();
                         break;
                     case 1:
+                        hasclickedOnThisFrame = true;
+                        hasclickedOnPaintID = 1;
                         pauseSimulation = !pauseSimulation;
                         break;
                     case 2:
+                        hasclickedOnThisFrame = true;
+                        hasclickedOnPaintID = 2;
                         brushSize++;
                         if(brushSize >= 8){
                             brushSize = 8;
                         }
                         break;
                     case 3:
+                        hasclickedOnThisFrame = true;
+                        hasclickedOnPaintID = 3;
                         brushSize--;
                         if(brushSize<=0){
                             brushSize = 1;
