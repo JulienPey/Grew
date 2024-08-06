@@ -286,7 +286,7 @@ public class Game  {
                             break;
                         case 15: // humain
                            onatTime = true;
-                            if((randomIncr%3 == 0 || isFirstClick)) {
+                            if(( isFirstClick)) {
                                 randomIncr++;
                                 /*
                                 worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
