@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     private GameLoop gameLoop;
@@ -14,19 +15,20 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle sis){
         super.onCreate(sis);
 
-        // Masquer la barre de statut (en haut de l'écran)
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        /*
-        // Masquer la barre de navigation (en bas de l'écran)
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-         */
         getWindow().setNavigationBarColor(Color.BLACK);
+        setContentView(R.layout.activity_main);
 
-        gameLoop = new GameLoop(MainActivity.this);//Initialize the gameLoop instance
-        setContentView(gameLoop);//setContentView to the game surfaceview
+        Button startGameButton = findViewById(R.id.startGameButton);
+        startGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameLoop = new GameLoop(MainActivity.this);//Initialize the gameLoop instance
+                setContentView(gameLoop);//setContentView to the game surfaceview
+            }
+        });
     }
-}
+
+    }
