@@ -254,9 +254,12 @@ public class ChunkHandler extends AppCompatActivity {
         int goGauche =  getBoolean2(data,5);
         int goDroiteN;
         int goGaucheN;
+
+        int LookingAtLeft =  getBoolean2(data,6);
+
         if(!IsMovable(18,(getPixelData(worldX, worldY + 1) ))&& !IsMovable(18,(getPixelData(worldX-1, worldY + 1) )) && rdm%20 == 0){
-            int rdm2 = rdm*4%50;
-            if(rdm2 < 20){
+            int rdm2 = rdm%50;
+            if(rdm2 < 10){
                 goDroiteN = 1;
                 goGaucheN = 0;
             } else if (rdm2 > 30){
@@ -281,10 +284,14 @@ public class ChunkHandler extends AppCompatActivity {
             }
 
             if(haschanged){
-                setPixelData(worldX,worldY,data);
-                if(goDroiteN == 1 || goDroite == 1){
+
+                if((goDroite == 1 && LookingAtLeft == 1) || (goGauche == 1 && LookingAtLeft == 0)){
                     swappixel(worldX-1, worldY-5, worldX, worldY-5);
+
+                    data = setBoolean(data,goGauche ,6);
                 }
+
+                setPixelData(worldX,worldY,data);
             }
         }
 
