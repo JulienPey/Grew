@@ -282,6 +282,9 @@ public class ChunkHandler extends AppCompatActivity {
 
             if(haschanged){
                 setPixelData(worldX,worldY,data);
+                if(goDroiteN == 1 || goDroite == 1){
+                    swappixel(worldX-1, worldY-5, worldX, worldY-5);
+                }
             }
         }
 
@@ -301,22 +304,10 @@ public class ChunkHandler extends AppCompatActivity {
             } else if(goGauche == 1 && isEmptyRow(worldX+xswap-2,worldY+yswap)){
                 xswap -=1;
                 break;
-            } else if((goGauche == 1 || goDroite == 1) && IsMovable(18,(getPixelData(worldX+xswap, worldY -7 + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY -7 + yswap) )) ){
+            } else if((goGauche == 1 || goDroite == 1) && IsMovable(18,(getPixelData(worldX+xswap, worldY -8 + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY -8 + yswap) )) ){
                 yswap -= 1;
                 isjumping = true;
             }
-            /*
-           else if(goGauche == 1 && isEmptyRow(worldX+xswap-2,worldY+yswap-8) && isEmptyRow(worldX+xswap-1,worldY+yswap-8)){
-                xswap -=1;
-                yswap -= 7;
-                break;
-            }else if(goDroite == 1 && isEmptyRow(worldX+xswap+1,worldY+yswap-8)&& isEmptyRow(worldX+xswap,worldY+yswap-8)){
-                xswap +=1;
-                yswap -= 7;
-                break;
-            }
-           */
-
             else {
                 break;
             }
@@ -332,7 +323,7 @@ public class ChunkHandler extends AppCompatActivity {
 
 
     private boolean isEmptyRow(int worldX, int worldY){
-        for(int i =0; i < 7;i++){
+        for(int i =0; i < 8;i++){
             if((!IsMovable(18,(getPixelData(worldX, worldY - i) )))) {
                 return false;
             }
