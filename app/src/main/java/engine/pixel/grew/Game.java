@@ -46,7 +46,7 @@ public class Game  {
     private int paintIDs = 24;
 
     private int decalagePaintBoxes = 0;
-    private int boxWidth = 180;
+    private int boxWidth = 177;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -147,7 +147,7 @@ public class Game  {
             }
 
             canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint2);
-            canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint1);
+           // canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint1);
 
             //canvas.drawBitmap(BitmapUtils.getBitmapForIndex(i), (i/2)*boxWidth-decalagePaintBoxes,this.height+enbas, null);
 
