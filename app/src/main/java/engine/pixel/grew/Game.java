@@ -20,6 +20,7 @@ public class Game  {
     private final WorldHandler worldhandler;
     private final ThreadPool threadpool;
     private final Bitmap bitmapIcones;
+    public final ScrennShake screenShake;
     private int oldBrushY;
     private int oldBrushX;
     private int paintID;
@@ -45,7 +46,7 @@ public class Game  {
     private int paintIDs = 24;
 
     private int decalagePaintBoxes = 0;
-    private int boxWidth = 140;
+    private int boxWidth = 180;
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -68,6 +69,8 @@ public class Game  {
         this.oldBrushY = 0;
        // BitmapUtils.preloadBitmaps(this.context, paintIDs);
         bitmapIcones = BitmapFactory.decodeResource(context.getResources(), R.drawable.icones);
+
+        this.screenShake = new ScrennShake();
 
         /*
         Future<?> task1 = threadpool.addThread(() -> {
@@ -99,7 +102,7 @@ public class Game  {
 
 
     public void draw(Canvas canvas) {
-
+        screenShake.applyShakeEffect();
         randomIncr++;
         worldhandler.draw(canvas);
 
@@ -220,11 +223,22 @@ public class Game  {
         gameLoop.updateCount++;
 
     }
+
+    public void hasTouchedEffect(){
+       if(screenShake.x < 2) screenShake.x = 2;
+        if(screenShake.y < 2)screenShake.y = 2;
+    }
+    public void hasTouchedEffect(int b){
+        if(screenShake.x < b) screenShake.x = b;
+        if(screenShake.y < b) screenShake.y = b;
+    }
+
     public void Touch(MotionEvent motionEvent) {
 
         if(!isdown){
             return;
         }
+
 
 
 
@@ -241,7 +255,7 @@ public class Game  {
         boolean onatTime = false;
         while (true) {
             // Dessine le pixel
-
+            boolean hasDrawed = true;
             for(int i =0;i < brushSize;i++){
                 for(int j =0;j < brushSize;j++) {
 
@@ -300,10 +314,8 @@ public class Game  {
                            onatTime = true;
                             if(( isFirstClick)) {
                                 randomIncr++;
-                                /*
-                                worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
-                                worldhandler.chunkhandler.setPixel( x,  y-1, Color.rgb(236, 107+randomIncr*7%100, 89+randomIncr*7%100), ChunkHandler.setType( 1 | (1 << 3),19) );
-                                */
+
+                                int color = Color.rgb(randomIncr*7%200, randomIncr*3%200, randomIncr*17%200);
 
                                 worldhandler.chunkhandler.setPixel( x,  y, Color.rgb(136, 0, 21), ChunkHandler.setType( 1 | (1 << 3) ,26) );
                                 worldhandler.chunkhandler.setPixel( x+1,  y, Color.rgb(136, 0, 21), ChunkHandler.setType( 1 | (1 << 3) ,26) );
@@ -314,18 +326,20 @@ public class Game  {
                                 worldhandler.chunkhandler.setPixel( x,  y+2, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,18) );
                                 worldhandler.chunkhandler.setPixel( x+1,  y+2, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,18) );
 
-                                worldhandler.chunkhandler.setPixel( x,  y+3, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
-                                worldhandler.chunkhandler.setPixel( x+1,  y+3, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x,  y+3,color, ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+3,color, ChunkHandler.setType( 1 | (1 << 3) ,18) );
 
-                                worldhandler.chunkhandler.setPixel( x,  y+4, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
-                                worldhandler.chunkhandler.setPixel( x+1,  y+4, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x,  y+4,color, ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+4, color, ChunkHandler.setType( 1 | (1 << 3) ,18) );
 
-                                worldhandler.chunkhandler.setPixel( x,  y+5, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
-                                worldhandler.chunkhandler.setPixel( x+1,  y+5, Color.rgb(randomIncr*7%100, randomIncr*7%100, 200), ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x,  y+5, color, ChunkHandler.setType( 1 | (1 << 3) ,18) );
+                                worldhandler.chunkhandler.setPixel( x+1,  y+5, color, ChunkHandler.setType( 1 | (1 << 3) ,18) );
 
                                 worldhandler.chunkhandler.setPixel( x,  y+6, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,25) );
                                 worldhandler.chunkhandler.setPixel( x+1,  y+6, Color.rgb(239, 228, 176), ChunkHandler.setType( 1 | (1 << 3) ,19) );
 
+                            } else {
+                                hasDrawed = false;
                             }
                             break;
                         case 21: // RayonX
@@ -335,11 +349,13 @@ public class Game  {
                                 while (true){
                                     if( worldhandler.chunkhandler.getPixelData(x,y+p)<< 31 == 0 ){
                                         worldhandler.chunkhandler.setPixel((x), (y+p), Color.rgb(0, 0, 255), ChunkHandler.setType(0, 21));
-                                        p++;
+                                         p++;
                                     } else{
                                         break;
                                     }
                                 }
+                                hasTouchedEffect(5);
+                                hasDrawed = false;
                             break;
                         case 22: // RayonX
                             onatTime = true;
@@ -359,22 +375,29 @@ public class Game  {
                             if(randomIncr%3 == 0 || isFirstClick){
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(150 + randomIncr*7%30, 150+ randomIncr*7%30, 150+ randomIncr*7%30), ChunkHandler.setType(1 | (1 << 3), 22));
+                            } else {
+                                hasDrawed = false;
                             }
                             break;
                         case 20: // grenade
                             if(randomIncr%2 == 0 || isFirstClick) {
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(87, 98, 56), ChunkHandler.setType(1, 23));
+                            } else {
+                                hasDrawed = false;
                             }
                             break;
                         case 14: // Grennouille
                             if(randomIncr%3 == 0 || isFirstClick) {
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(0, 255, 0), ChunkHandler.setType(1 | (1 << 3), 24));
+                            } else {
+                                hasDrawed = false;
                             }
                             break;
 
                         default:
+                            hasDrawed = false;
                             // Handle unknown paintID if necessary
                             break;
                     }
@@ -383,7 +406,9 @@ public class Game  {
             }
 
 
-
+        if(hasDrawed){
+            hasTouchedEffect();
+        }
 
 
 

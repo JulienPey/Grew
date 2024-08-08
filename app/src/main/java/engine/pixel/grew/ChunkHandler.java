@@ -77,7 +77,7 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     public void draw(Canvas canvas) {
-       canvas.drawBitmap(Chunksbitmap, matrix, null);
+       canvas.drawBitmap(Chunksbitmap,worldHandler.game.screenShake.matrix, null);
     }
 
     public void setPixel(int x, int y, int color, int data) {
@@ -772,13 +772,13 @@ public class ChunkHandler extends AppCompatActivity {
 
         for(int x =-r; x < r; x++){
             for(int y =-r; y < r; y++){
-                    if(x*x  + y*y < r*r){
+                    if(x*x  + y*y < r*r ){
                         if(isInBound(worldX+x,worldY +y)&& IsMovable(12, getPixelData(worldX+x,worldY +y))){
                             if(rdm%50 == 1){
                                // worldHandler.particlehandler.particlesList.add(new Particle(worldX+x,worldY+y,0,-1,0,0, Color.argb( 130 + (rdm*7)%100,255, 255, 255),1,30+(rdm%20)));
                                 setPixel(worldX+x, worldY +y, Color.rgb(255, 255, 255), ChunkHandler.setType(0,  5));
                             } else {
-                                setPixel(worldX+x, worldY +y, Color.rgb(255, 100+100-(x*x  + y*y*4)%100, 0), ChunkHandler.setType(0,  5));
+                                setPixel(worldX+x, worldY +y, Color.rgb(255, 100+100-(x*x  + y*y)%100, 0), ChunkHandler.setType(0,  5));
                             }
                         }
                     }
@@ -786,8 +786,7 @@ public class ChunkHandler extends AppCompatActivity {
             }
 
         }
-
-
+     worldHandler.game.hasTouchedEffect(radius*2);
 
 
     }
@@ -1320,7 +1319,7 @@ public class ChunkHandler extends AppCompatActivity {
                 return data << 31 == 0 ||type == 2 ||type == 10 || type == 16;
 
             case 18:
-                return data << 31 == 0; //|| type == 2 ||type == 10  ||type == 20 || type == 16;
+                return data << 31 == 0 || type == 2 ||type == 10  ||type == 20 || type == 16 ;
 
             case 24:
                 return data << 31 == 0 && type != 24;
