@@ -12,6 +12,12 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
+import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.content.Context;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class Game  {
     private static final String LOGTAG = "Game";
     private final Context context;
@@ -72,32 +78,10 @@ public class Game  {
 
         this.screenShake = new ScrennShake();
 
-        /*
-        Future<?> task1 = threadpool.addThread(() -> {
-            long startTime;
-            long waitTime;
-            while (true) {
-                startTime = System.currentTimeMillis();
-
-                worldhandler.draw();
-                gameLoop.averageUPS++;
-                Touch();
-
-                waitTime = System.currentTimeMillis() - startTime;
-                long sleepTime = (long) (1E+3 / 60) - waitTime;
-                if (sleepTime > 0) {
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt(); // Re-set the interrupt flag
-                    }
-                }
-            }
-        });
 
 
-         */
     }
+
 
 
 
@@ -227,10 +211,21 @@ public class Game  {
     public void hasTouchedEffect(){
        if(screenShake.x < 2) screenShake.x = 2;
         if(screenShake.y < 2)screenShake.y = 2;
+
     }
     public void hasTouchedEffect(int b){
         if(screenShake.x < b) screenShake.x = b;
         if(screenShake.y < b) screenShake.y = b;
+    }
+
+
+    public void vibrate(int ms, int amplitude){
+
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(VibrationEffect.createOneShot(ms, amplitude));
+        }
+
     }
 
     public void Touch(MotionEvent motionEvent) {
@@ -445,6 +440,8 @@ public class Game  {
 
             if(action == MotionEvent.ACTION_DOWN){
             if(motionEvent.getX() < boxWidth*paintIDs){
+
+                vibrate(30,5);
                 int xpos = (int)(motionEvent.getX() + decalagePaintBoxes)/boxWidth;
                 int ypos = motionEvent.getY()>= height+boxWidth ? 1 : 0;
 

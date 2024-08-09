@@ -787,6 +787,7 @@ public class ChunkHandler extends AppCompatActivity {
 
         }
      worldHandler.game.hasTouchedEffect(radius*2);
+        worldHandler.game.vibrate(radius*10,1);
 
 
     }
