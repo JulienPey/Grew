@@ -300,7 +300,7 @@ public class Game  {
                             break;
                         case 9: // ColoredPowder
                             randomIncr++;
-                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(255, randomIncr * 8 % 150, 255), ChunkHandler.setType(1, 1));
+                            worldhandler.chunkhandler.setPixel((x + i), (y + j), Color.rgb(randomIncr * 17  % 255, randomIncr * 3 % 255, randomIncr * 8 % 255), ChunkHandler.setType(1, 1));
                             break;
                         case 19: // NytroGlicérine
                             randomIncr++;

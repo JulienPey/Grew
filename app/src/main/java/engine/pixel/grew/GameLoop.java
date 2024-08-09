@@ -13,6 +13,8 @@ import android.view.SurfaceView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.lang.reflect.Field;
+
 public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Runnable{
 
     public Game Game;
@@ -143,6 +145,9 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
             drawThread.start();
         }
     }
+
+
+
     public void run() {
         updateCount = 0;
         int frameCount = 0;
@@ -158,6 +163,7 @@ public class GameLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
             try {
                 canvas = surfaceHolder.lockCanvas();
+
                 synchronized (surfaceHolder) {
                     // Mettre Ã  jour la logique du jeu
                     Game.update();
