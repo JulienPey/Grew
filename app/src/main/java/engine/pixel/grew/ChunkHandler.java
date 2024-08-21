@@ -257,7 +257,7 @@ public class ChunkHandler extends AppCompatActivity {
 
         int LookingAtLeft =  getBoolean2(data,6);
 
-        if(!IsMovable(18,(getPixelData(worldX, worldY + 1) ))&& !IsMovable(18,(getPixelData(worldX-1, worldY + 1) )) && rdm%20 == 0){
+        if(!IsMovable(18,(getPixelData(worldX, worldY + 1) ))&& !IsMovable(18,(getPixelData(worldX-1, worldY + 1) )) && rdm%10 == 0){
             int rdm2 = rdm%50;
             if(rdm2 < 10){
                 goDroiteN = 1;
@@ -321,7 +321,6 @@ public class ChunkHandler extends AppCompatActivity {
         }
 
         if(xswap != 0 || yswap != 0){
-            Log.e("ALED", String.valueOf(xswap));
             moveHumain(worldX+xswap, worldY+yswap, worldX, worldY);
         }
 

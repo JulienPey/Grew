@@ -8,8 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.view.MotionEvent;
 
 import android.os.Bundle;
@@ -52,7 +54,7 @@ public class Game  {
     private int paintIDs = 24;
 
     private int decalagePaintBoxes = 0;
-    private int boxWidth = 177;
+    private int boxWidth = convertDpToPx(63);
 
     public Game(Context context,GameLoop gameLoop){
 
@@ -106,45 +108,26 @@ public class Game  {
         canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
        // canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
 
-        Paint paint1 = new Paint();
-        paint1.setColor(Color.BLACK);
-        paint1.setStyle(Paint.Style.STROKE);
-        int pixelbordurelength = 3;
-        paint1.setStrokeWidth(pixelbordurelength);
-
-
-        Paint paint2 = new Paint();
+       Paint paint2 = new Paint();
         for(int i = 0; i < paintIDs;i++){
-
             randomIncr++;
-
             int enbas = 0;
-
             if(i%2 == 1){
                 enbas = boxWidth;
             }
-
             if((hasclickedOnThisFrame && i == hasclickedOnPaintID) || i == paintID){
                 paint2.setColor(Color.rgb(230,230,230));
             } else {
                 paint2.setColor(getcolor(i));
             }
-
             canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint2);
-           // canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint1);
-
-            //canvas.drawBitmap(BitmapUtils.getBitmapForIndex(i), (i/2)*boxWidth-decalagePaintBoxes,this.height+enbas, null);
-
-
-        }
+               }
         hasclickedOnThisFrame = false;
         canvas.drawBitmap(bitmapIcones, -decalagePaintBoxes,this.height, null);
+    }
 
-//canvas.drawBitmap(d, 0,0, null);
-        //debugchunk(canvas);Color.rgb(i*50+50+ enbas,i*20,i*70+enbas)
-
-
-
+    public int convertDpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
 
@@ -166,10 +149,10 @@ public class Game  {
             case 1:
             case 2:
             case 3:
-                return  Color.rgb(10,120,123);
+                return  Color.rgb(64, 93, 114);
 
             case 4:
-                return  Color.rgb(100,120,123);
+                return  Color.rgb(117, 134, 148);
             case 5:
             case 6:
             case 7:
@@ -178,15 +161,15 @@ public class Game  {
             case 10:
             case 11:
             case 12:
-                return  Color.rgb(170,190,193);
+                return  Color.rgb(163, 201, 170);
             case 13:
             case 14:
             case 15:
-                return  Color.rgb(50,150,50);
+                return  Color.rgb(128, 175, 129);
             case 23:
-                return  Color.rgb(50,50,150);
+                return  Color.rgb(34, 9, 44);
             default:
-                return  Color.rgb(250,50,50);
+                return  Color.rgb(135, 35, 65);
         }
 
 
@@ -487,11 +470,12 @@ public class Game  {
             return;
             } else{
                 decalagePaintBoxes += (brushX -  (int) motionEvent.getX() / pixelSize)*6;
-                if(decalagePaintBoxes < 0){
-                    decalagePaintBoxes = 0;
-                }
+
                 if (decalagePaintBoxes + width>= boxWidth*paintIDs/2){
                     decalagePaintBoxes = boxWidth*paintIDs/2 - width;
+                }
+                if(decalagePaintBoxes < 0){
+                    decalagePaintBoxes = 0;
                 }
 
             }
