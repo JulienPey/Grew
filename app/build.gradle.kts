@@ -9,9 +9,9 @@ android {
     defaultConfig {
         applicationId = "engine.pixel.grew"
         minSdk = 29
-        targetSdk = 33
-        versionCode = 2
-        versionName = "1.1"
+        targetSdk = 34
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
