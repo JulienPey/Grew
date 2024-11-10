@@ -4,7 +4,7 @@ import android.graphics.Matrix;
 
 import java.util.Random;
 
-public class ScrennShake {
+public class ScreenShake {
 
 
     private float currentTranslationX;
@@ -14,7 +14,7 @@ public class ScrennShake {
     public int x;
     public float lowering = 0.1F;
 
-    public ScrennShake() {
+    public ScreenShake() {
         this.x =0;
         this.y = 0;
         this.currentTranslationX = 0;

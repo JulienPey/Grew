@@ -10,14 +10,12 @@ public class WorldHandler {
     public final ParticleHandler particlehandler;
 
     public WorldHandler(Context context, GameLoop gameLoop,Game game){
-
         this.game = game;
         this.chunkhandler = new ChunkHandler(context,gameLoop,this);
         this.particlehandler = new ParticleHandler(context,gameLoop,this);
     }
 
     public void draw(Canvas canvas) {
-
         chunkhandler.draw(canvas);
         particlehandler.draw(canvas);
     }

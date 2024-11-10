@@ -37,7 +37,22 @@ public class ChunkHandler extends AppCompatActivity {
     private Random random = new Random();
     public int[] PixelList;
     public int[] PixelColor;
+    /*
+    Explication des Bits de PixelList (chaque nombre correspond à une variable)
+    0000 // R
+    0000 // G
+    0000 // B
 
+    0000 // Type
+    0000 // Type
+    0000 // [Poid][Poid][Poid][Poid]
+    0000 // [][][][]
+
+    0000 // [][][][]
+    0000 // [][][][]
+    0000 // [][][G][D]
+    0000 // [][UpdatedTickIsPaire][IsInOrOut][IsSolide]
+ */
 
     public ChunkHandler(Context context, GameLoop gameLoop, WorldHandler worldHandler){
 

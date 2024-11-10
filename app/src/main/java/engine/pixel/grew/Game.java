@@ -8,17 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Shader;
 import android.view.MotionEvent;
 
-import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.content.Context;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class Game  {
     private static final String LOGTAG = "Game";
@@ -28,7 +23,7 @@ public class Game  {
     private final WorldHandler worldhandler;
     private final ThreadPool threadpool;
     private final Bitmap bitmapIcones;
-    public final ScrennShake screenShake;
+    public final ScreenShake screenShake;
     private int oldBrushY;
     private int oldBrushX;
     private int paintID;
@@ -78,7 +73,7 @@ public class Game  {
        // BitmapUtils.preloadBitmaps(this.context, paintIDs);
         bitmapIcones = BitmapFactory.decodeResource(context.getResources(), R.drawable.icones);
 
-        this.screenShake = new ScrennShake();
+        this.screenShake = new ScreenShake();
 
 
 

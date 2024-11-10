@@ -14,6 +14,7 @@ public class Particle {
     public int Color;
 
     public Particle(int PosX, int PosY, double VelocityX, double VelocityY, double AccélérationX, double AccélérationY, int Color, int ParticleID, int LiveTime) {
+       //Toutes les variables d'une particule
         this.PosX= PosX;
         this.PosY= PosY;
         this.VelocityX= VelocityX;

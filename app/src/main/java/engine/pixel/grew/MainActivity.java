@@ -22,11 +22,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button startGameButton = findViewById(R.id.startGameButton);
+
+        //Si on appuis sur le bouton, on lance la Simulation
         startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameLoop = new GameLoop(MainActivity.this);//Initialize the gameLoop instance
-                setContentView(gameLoop);//setContentView to the game surfaceview
+                gameLoop = new GameLoop(MainActivity.this);
+                setContentView(gameLoop);
             }
         });
     }
