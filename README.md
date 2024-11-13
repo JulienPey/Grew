@@ -17,6 +17,9 @@ git clone https://github.com/JulienPey/grew.git
 3. Assurez-vous d'avoir toutes les dépendances requises installées.
 
 4. Compilez et exécutez l'application sur un émulateur Android ou un appareil physique.## Fonctionnalités
+
+## Fonctionnalités
+
 - **Simulation d'éléments physiques :** sable, eau, feu, acide et plus, avec des comportements et interactions dynamiques.
 - **Réactions physiques réalistes :** explosions, incendies, dissolutions acides et autres interactions complexes
 - **Moteur de simulation complet :** gestion de la boucle de jeu, des mises à jour en temps réel et du rendu graphique via Canvas.
