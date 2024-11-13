@@ -16,7 +16,7 @@ git clone https://github.com/JulienPey/grew.git
 
 3. Assurez-vous d'avoir toutes les dépendances requises installées.
 
-4. Compilez et exécutez l'application sur un émulateur Android ou un appareil physique.## Fonctionnalités
+4. Compilez et exécutez l'application sur un émulateur Android ou un appareil physique.
 
 ## Fonctionnalités
 
