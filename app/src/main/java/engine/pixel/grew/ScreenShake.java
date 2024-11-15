@@ -24,7 +24,6 @@ public class ScreenShake {
 
     }
 
-
     public void applyShakeEffect() {
         Random random = new Random();
 

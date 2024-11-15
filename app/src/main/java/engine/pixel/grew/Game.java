@@ -74,9 +74,6 @@ public class Game  {
         bitmapIcones = BitmapFactory.decodeResource(context.getResources(), R.drawable.icones);
 
         this.screenShake = new ScreenShake();
-
-
-
     }
 
 
@@ -89,21 +86,24 @@ public class Game  {
 
 
         this.Console(canvas);
-
-
+        this.afficherBoutons(canvas);
 
     }
 
 
-    public void Console(Canvas canvas) {
+    public void Console(Canvas canvas) { // Fonction qui affiche des informations de débug
 
         Paint paint = new Paint();
         paint.setTextSize(20);
         paint.setColor(Color.WHITE);
         canvas.drawText("FPS: " + gameLoop.getAverageFPS(), 10, 30, paint);
-       // canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
+        canvas.drawText("Pixels Swaps: " + worldhandler.chunkhandler.pixelUpdatingNbr, 10, 60, paint);
 
-       Paint paint2 = new Paint();
+    }
+
+    public void afficherBoutons(Canvas canvas) { // fonction qui affiche les boutons
+
+        Paint paint2 = new Paint();
         for(int i = 0; i < paintIDs;i++){
             randomIncr++;
             int enbas = 0;
@@ -116,30 +116,19 @@ public class Game  {
                 paint2.setColor(getcolor(i));
             }
             canvas.drawRect((i/2)*boxWidth-decalagePaintBoxes, this.height+enbas, boxWidth*(i/2)+boxWidth-decalagePaintBoxes, this.height+boxWidth+enbas, paint2);
-               }
+        }
         hasclickedOnThisFrame = false;
         canvas.drawBitmap(bitmapIcones, -decalagePaintBoxes,this.height, null);
+
     }
 
     public int convertDpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
+    private int getcolor(int i) { // Renvoie une couleur pour l'indexe d'un bouton
 
-    public static Bitmap getBitmapForIndex(Context context, int i) {
-        int resId = context.getResources().getIdentifier("icone_" + i, "drawable", context.getPackageName());
-
-        if (resId == 0) {
-            // Ressource introuvable, retour du bitmap par défaut
-            resId = R.drawable.defaut; // Remplacez "defaut" par le nom de votre image par défaut
-        }
-
-        return BitmapFactory.decodeResource(context.getResources(), resId);
-    }
-
-    private int getcolor(int i) {
-
-        switch (i){
+        switch (i){ //Le switch case est utilisé car c'est plus rapide que des if
             case 0:
             case 1:
             case 2:
@@ -166,44 +155,34 @@ public class Game  {
             default:
                 return  Color.rgb(135, 35, 65);
         }
-
-
     }
 
 
     public void update() {
-
-
         t += 1;
         randomIncr++;
-
         if(pauseSimulation){
             return;
         }
-
         worldhandler.update();
         gameLoop.updateCount++;
 
     }
 
-    public void hasTouchedEffect(){
-       if(screenShake.x < 2) screenShake.x = 2;
-        if(screenShake.y < 2)screenShake.y = 2;
-
+    public void hasTouchedEffect(){ // Fait bouger l'écran valeur = 2 (Plus simple pour modification global du code)
+        hasTouchedEffect(2);
     }
-    public void hasTouchedEffect(int b){
+    public void hasTouchedEffect(int b){ // Fait bouger l'écrant avec une valeur b
         if(screenShake.x < b) screenShake.x = b;
         if(screenShake.y < b) screenShake.y = b;
     }
 
 
-    public void vibrate(int ms, int amplitude){
-
+    public void vibrate(int ms, int amplitude){ // Fait vibrer le téléphone
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
             vibrator.vibrate(VibrationEffect.createOneShot(ms, amplitude));
         }
-
     }
 
     public void Touch(MotionEvent motionEvent) {
@@ -211,9 +190,6 @@ public class Game  {
         if(!isdown){
             return;
         }
-
-
-
 
         int dx = Math.abs(brushX - oldBrushX);
         int dy = Math.abs(brushY - oldBrushY);
@@ -226,6 +202,8 @@ public class Game  {
         int x = oldBrushX;
         int y = oldBrushY;
         boolean onatTime = false;
+
+        //En gros cette boucle sert à faire un trait continue de pixels du bon type
         while (true) {
             // Dessine le pixel
             boolean hasDrawed = true;
@@ -235,6 +213,7 @@ public class Game  {
                     if(onatTime || i+x == 0 || i+x+1 >= width/pixelSize || y+j == 0 || y+j+2 >= height/pixelSize){
                         continue;
                     }
+                    //Pour chaque élément disponible, on a un pixel spécifique, d'une couleur spécifique, Type 1 = solide, X | (1 << 3) enflammable
 
                     switch (paintID) {
                         case 4: // AIR
@@ -360,7 +339,7 @@ public class Game  {
                                 hasDrawed = false;
                             }
                             break;
-                        case 14: // Grennouille
+                        case 14: // Grenouille
                             if(randomIncr%3 == 0 || isFirstClick) {
                                 randomIncr++;
                                 worldhandler.chunkhandler.setPixel((x), (y), Color.rgb(0, 255, 0), ChunkHandler.setType(1 | (1 << 3), 24));
@@ -371,7 +350,6 @@ public class Game  {
 
                         default:
                             hasDrawed = false;
-                            // Handle unknown paintID if necessary
                             break;
                     }
                 }
@@ -382,8 +360,6 @@ public class Game  {
         if(hasDrawed){
             hasTouchedEffect();
         }
-
-
 
             // Vérifie si nous avons atteint le point final
             if (x == brushX && y == brushY) break;
@@ -406,12 +382,6 @@ public class Game  {
     public void TouchEvent(MotionEvent motionEvent) {
 
         int action = motionEvent.getAction();
-       /* if(motionEvent.getY()< 0){
-            clearSimulation();
-
-        }
-        */
-
 
         // TOUT CE QU'IL SE PASSE DANS LES BOUTONS
         if(motionEvent.getY()>= height ){
@@ -506,7 +476,7 @@ public class Game  {
 
     private void clearSimulation() {
         pauseSimulation = true;
-            worldhandler.clearSimulation();
+        worldhandler.clearSimulation();
         pauseSimulation = false;
     }
 }

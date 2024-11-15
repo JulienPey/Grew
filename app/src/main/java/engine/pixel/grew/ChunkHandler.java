@@ -45,13 +45,13 @@ public class ChunkHandler extends AppCompatActivity {
 
     0000 // Type
     0000 // Type
-    0000 // [Poid][Poid][Poid][Poid]
+    0000 // [][][][]
     0000 // [][][][]
 
     0000 // [][][][]
     0000 // [][][][]
     0000 // [][][G][D]
-    0000 // [][UpdatedTickIsPaire][IsInOrOut][IsSolide]
+    0000 // [Inflammable][UpdatedTickIsPaire][IsInOrOut][IsSolide]
  */
 
     public ChunkHandler(Context context, GameLoop gameLoop, WorldHandler worldHandler){
@@ -64,7 +64,7 @@ public class ChunkHandler extends AppCompatActivity {
 
 
         this.Chunksbitmap = Bitmap.createBitmap(Screenwidth, Screenheight, Bitmap.Config.RGB_565);
-        //Chunksbitmap.eraseColor( Color.BLACK);
+
         Chunksbitmap.eraseColor( Color.rgb(16,7,23));
         this.matrix = new Matrix();
         this.matrix.postScale(Game.pixelSize, Game.pixelSize);
@@ -80,7 +80,6 @@ public class ChunkHandler extends AppCompatActivity {
         for(int i =0; i < worldSize;i++){
             PixelColor[i] = Color.rgb(16,7,23);
         }
-
 
          paint = new Paint();
 
@@ -169,10 +168,10 @@ public class ChunkHandler extends AppCompatActivity {
                 update_boum(worldX, worldY, 25);
                 break;
             case 18:
-                update_HumainTeteMid(worldX,worldY);//update_HumainPied(worldX, worldY);
+                update_HumainTeteMid(worldX,worldY);
                 break;
             case 19:
-                update_HumainBrain(worldX,worldY);//update_HumainTete(worldX, worldY);
+                update_HumainBrain(worldX,worldY);
                 break;
             case 20:
                 update_blood(worldX, worldY);
@@ -196,7 +195,6 @@ public class ChunkHandler extends AppCompatActivity {
                 update_HumainTeteUp(worldX, worldY);
                 break;
             default:
-                // Handle unknown type if necessary
                 break;
         }
 
@@ -610,84 +608,6 @@ public class ChunkHandler extends AppCompatActivity {
 
 
 
-    private void update_HumainTete(int worldX, int worldY) {
-        if(getType(getPixelData(worldX,worldY +1 )) != 18){
-            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
-            return;
-        }
-    }
-
-    private void update_HumainPied(int worldX, int worldY) {
-
-        if(getType(getPixelData(worldX,worldY -1)) != 19){
-            setPixel(worldX, worldY, Color.rgb(255, 0, 0), ChunkHandler.setType(1,  20));
-            return;
-        }
-        int data = getPixelData(worldX,worldY);
-        if(!oneUpdateAtATime(data,worldX,worldY)){
-            return;
-        }
-
-        int spreadTime = 5;
-        int xswap = 0;
-        int yswap = 0;
-
-
-        int goDroite =  getBoolean(data,4);
-        int goGauche =  getBoolean(data,5);
-
-
-        if(!IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) && rdm%20 == 0){
-            int rdm2 = rdm*4%50; //(int) (Math.random()*50);
-            if(rdm2 < 10){
-                goDroite = 0;
-                goGauche = 1;
-            } else if (rdm2 > 30){
-                goDroite = 1;
-                goGauche = 0;
-            } else {
-                goDroite = 1;
-                goGauche = 1;
-            }
-
-            data = setBoolean(data,goDroite,4);
-            data = setBoolean(data,goGauche,5);
-            setPixelData(worldX,worldY,data);
-        }
-
-        for(int i = 0;i < spreadTime; i++) {
-            if (IsMovable(18,(getPixelData(worldX+xswap, worldY + 1 + yswap) )) ) {
-                yswap += 1;
-            } else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-1) ))) {
-                xswap += 1;
-                break;
-            } else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-1) ))) {
-                xswap -= 1;
-                break;
-            }else if (goGauche == 0 && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-2) )) && IsMovable(18,(getPixelData(worldX+xswap-1, worldY + yswap-3) ))) {
-                xswap -= 1;
-                yswap -= 2;
-                break;
-            }else if (goDroite == 0 && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-2) )) && IsMovable(18,(getPixelData(worldX+xswap+1, worldY + yswap-3) ))) {
-                xswap += 1;
-                yswap -= 2;
-                break;
-            }
-
-            else{
-                break;
-            }
-        }
-
-        if(xswap != 0 || yswap != 0){
-
-            swappixel(worldX+xswap, worldY+yswap, worldX, worldY);
-            swappixel(worldX+xswap, worldY+yswap-1, worldX, worldY-1);
-
-        }
-
-
-    }
 
     private void update_Nytroglicerine(int worldX, int worldY) {
         for(int x =-1; x < 1; x++) {
@@ -1185,7 +1105,6 @@ public class ChunkHandler extends AppCompatActivity {
 
     private void update_sable(int worldX, int worldY) {
 
-
         int spreadTime = 5;
         int xswap = 0;
         int yswap = 0;
@@ -1226,10 +1145,8 @@ public class ChunkHandler extends AppCompatActivity {
     }
 
     public int getPixelData(int x,int y) {
-
         if(y <= 0 || y >= worldSizeY -1){return (1);}
         if(x <= 0 || x >= worldSizeX -1){return (1);}
-;
         return PixelList[x+(y*worldSizeX)];
     }
 
@@ -1237,6 +1154,7 @@ public class ChunkHandler extends AppCompatActivity {
          PixelList[x+(y*worldSizeX)] = data;
     }
 
+    //Echange 2 pixels
     public void swappixel(int x1, int y1, int x2, int y2) {
         int index1 = x1 + y1 * worldSizeX;
         int index2 = x2 + y2 * worldSizeX;
@@ -1256,6 +1174,7 @@ public class ChunkHandler extends AppCompatActivity {
         pixelUpdatingNbr++;
     }
 
+    //Marque un pixel pour qu'il ne s'update qu'une fois
     private boolean oneUpdateAtATime(int pixelValue,int worldX,int worldY){
         if (((pixelValue & (1 << 2)) >> 2) == t % 2) {
             return false;
@@ -1272,6 +1191,7 @@ public class ChunkHandler extends AppCompatActivity {
         return nbr<<(31 -id) >> 31;
     }
 
+    //getBoolean a un bug mais que dans update_HumainBrain, getbolean renvoie -1 ou 0 il me semble au lieu de 0 et 1
     public int getBoolean2(int nbr,int id) {
        if(nbr<<(31 -id) >> 31 == 0){
            return 0;
@@ -1279,16 +1199,19 @@ public class ChunkHandler extends AppCompatActivity {
        return 1;
     }
 
+    //Renvoie la data d'un pixel mais avec un bit modifié
     public int setBoolean(int originalNumber, int newType,int id) {
         int mask = ~(1 << id);
         int clearedNumber = originalNumber & mask;
         return (clearedNumber | (newType << id));
     }
 
+    //Renvoie le type d'un Pixel
     public int getType(int nbr) {
         return nbr>>24;
     }
 
+    //Renvoie la data d'un pixel mais avec son type modifié
     public static int setType(int originalNumber, int newType) {
         int mask = ~(255 << 24);
         int clearedNumber = originalNumber & mask;
@@ -1303,6 +1226,7 @@ public class ChunkHandler extends AppCompatActivity {
         }
     }
 
+    //Fonction qui renvoie True si un type élément peut déplacer la cellule data (false sinon)
     private boolean IsMovable(int typeElement, int data) {
         int type = getType(data);
         switch (typeElement) {
