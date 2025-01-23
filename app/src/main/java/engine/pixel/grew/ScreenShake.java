@@ -23,6 +23,7 @@ public class ScreenShake {
         this.matrix.postScale(Game.pixelSize, Game.pixelSize);
     }
 
+
     public void applyShakeEffect() {
         Random random = new Random();
 
