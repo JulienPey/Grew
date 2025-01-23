@@ -21,7 +21,6 @@ public class ScreenShake {
         this.currentTranslationY = 0;
         this.matrix = new Matrix();
         this.matrix.postScale(Game.pixelSize, Game.pixelSize);
-
     }
 
     public void applyShakeEffect() {
